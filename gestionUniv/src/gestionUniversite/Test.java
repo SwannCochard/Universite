@@ -15,7 +15,6 @@ public class Test {
         Universite universite = new Universite("UHP", mod);
         mod.connecter("log1", "mdp");
         Personnel p = new Personnel("mdp", "toi", "moi", universite);
-        p.ajouterEtudiant("bob", "de", "Paris");
         p.ajouterFormation("je sais pas quoi", "info", "master");
         p.ajouterEtudiant("Thierry", "la", "Fronde");
         mod.deconnecter();
