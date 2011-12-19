@@ -23,12 +23,13 @@ public abstract class Personne {
         this.universite = universite;
     }
 
-    public Personne(int identifiant, String login, String motDePasse, String nom, String prenom) {
+    public Personne(int identifiant, String login, String motDePasse, String nom, String prenom, Universite universite) {
         this.identifiant = identifiant;
         this.login = login;
         this.motDePasse = motDePasse;
         this.nom = nom;
         this.prenom = prenom;
+        this.universite = universite;
     }
     
     
@@ -57,6 +58,18 @@ public abstract class Personne {
                + "nom : "+nom
                + "prenom : "+prenom;
        return res;
+    }
+
+    public void setIdentifiant(int identifiant) {
+        this.identifiant = identifiant;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    String getMdp() {
+        return this.motDePasse;
     }
     
     

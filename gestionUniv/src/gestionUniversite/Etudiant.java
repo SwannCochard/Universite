@@ -16,8 +16,8 @@ public class Etudiant extends Personne {
         super(motDePasse, nom, prenom, universite);
     }
 
-    public Etudiant(int identifiant, String login, String motDePasse, String nom, String prenom) {
-        super(identifiant, login, motDePasse, nom, prenom);
+    public Etudiant(int identifiant, String login, String motDePasse, String nom, String prenom, Universite universite) {
+        super(identifiant, login, motDePasse, nom, prenom, universite);
     }
     
     public void consulterNotes() {

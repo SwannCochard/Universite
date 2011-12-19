@@ -12,13 +12,30 @@ public class Module {
     
     private String nom,code;
     private int coefTD, coefTP, coefCM, coefModule;
-
-    public Module(String nom) {
+    private Professeur responsable;
+    public Module(String nom, String code) {
         this.nom = nom;
+        this.code = code;
+    }
+
+    public void setResponsable(Professeur responsable) {
+        this.responsable = responsable;
+    }
+
+    public Professeur getResponsable() {
+        return responsable;
     }
     
     public void calculerMoyenne() {
         
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getNom() {
+        return nom;
     }
 
     public int getCoefCM() {

@@ -14,8 +14,10 @@ public class Formation {
     private ArrayList<Module> modules;
     private String nom, code;
 
-    public Formation(String nom) {
+    public Formation(String nom, String code) {
         this.nom = nom;
+        this.code = code;
+        modules = new ArrayList<Module>();
     }
 
     public void ajouterModule(Module m) {
@@ -25,6 +27,19 @@ public class Formation {
     public void calculerMoyenne() {
         
     }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public ArrayList<Module> getLesModules() {
+        return this.modules;
+    }
+    
     
     
 }
