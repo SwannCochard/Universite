@@ -9,7 +9,7 @@ package gestionUniversite;
  * @author Swann
  */
 
-// Bonjour
+// Bonjour  
 public class Salle {
     private String nom;
     private int capacite;
