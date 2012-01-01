@@ -442,8 +442,7 @@ public class ModeleApplication {
             }
         }
         
-        return modules;
-        
+        return modules;   
     }
 
     boolean leftToCommit() {
@@ -479,8 +478,20 @@ public class ModeleApplication {
          * 
          */
         
+        /*
+         * Faut-il faire -> 
+         * 1. Aller chercher ensembles des séances dans la BDD
+         * 2. Les ajouter dans l'université (vérifier au passage si elles sont déjà dedans)
+         * 3. Demander à l'étudiant ou au prof de regarder son edt
+         * 
+         */
+        
+        /*
+         * ArrayList<Sceance> modules = new ArrayList<Sceance>();
+         * Récup BDD
+         * Reconstruction objets BDD
+         */
+        
         return null;
-        
-        
     }
 }

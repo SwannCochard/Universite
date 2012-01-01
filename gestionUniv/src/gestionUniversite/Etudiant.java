@@ -5,6 +5,7 @@
 package gestionUniversite;
 
 import java.sql.Date;
+import java.util.ArrayList;
 
 /**
  *
@@ -24,8 +25,8 @@ public class Etudiant extends Personne {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-    public void consulterEDT(Date dateDebut, Date dateFin) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public ArrayList<Sceance> consulterEDT(Date dateDebut, Date dateFin) {
+        return null;
     }
 
     @Override

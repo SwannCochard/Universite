@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package gestionUniversite;
 
 import java.util.ArrayList;
@@ -17,6 +13,7 @@ public class Universite {
     private ArrayList<Professeur> lesProfesseurs;
     private ArrayList<Formation> lesFormations;
     private ArrayList<Salle> lesSalles;
+    private ArrayList<Sceance> lesSceances;
     private boolean leftToCommit;
     private String nom;
     private ModeleApplication modeleApplication;
@@ -30,6 +27,7 @@ public class Universite {
         this.lesPersonnes = new ArrayList<Personne>();
         this.lesProfesseurs = new ArrayList<Professeur>();
         this.lesSalles = new ArrayList<Salle>();
+        this.lesSceances = new ArrayList<Sceance>();
         this.leftToCommit = false;
     }
 

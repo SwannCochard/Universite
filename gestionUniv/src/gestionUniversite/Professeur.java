@@ -50,7 +50,8 @@ public class Professeur extends Personne {
         
     }
     
-    public void consulterEDT(Date dateDebut, Date dateFin) {
+    public ArrayList<Sceance> consulterEDT(Date dateDebut, Date dateFin) {
+        return null;
         
     }
     
