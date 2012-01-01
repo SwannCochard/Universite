@@ -5,7 +5,7 @@
 package gestionUniversite;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 
 /**
  *
@@ -53,6 +53,7 @@ public class Professeur extends Personne {
     public void consulterEDT(Date dateDebut, Date dateFin) {
         
     }
+    
     @Override
     public void save() {
         throw new UnsupportedOperationException("Not supported yet.");

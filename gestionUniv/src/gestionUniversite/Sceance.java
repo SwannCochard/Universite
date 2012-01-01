@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package gestionUniversite;
 
 import java.util.Enumeration;
@@ -12,8 +8,9 @@ import java.util.Enumeration;
  */
 public class Sceance {
     private Enumeration type;
+    private String codeModule;
     private String jour;
     private int heure;
+    private int duree;
     private Salle salle;
-    
 }

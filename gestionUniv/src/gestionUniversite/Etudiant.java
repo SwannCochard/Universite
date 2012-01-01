@@ -4,7 +4,7 @@
  */
 package gestionUniversite;
 
-import java.util.Date;
+import java.sql.Date;
 
 /**
  *
@@ -39,8 +39,5 @@ public class Etudiant extends Personne {
 
     public void setFormation(Formation formation) {
         this.formation = formation;
-    }
-    
-    
-    
+    }   
 }

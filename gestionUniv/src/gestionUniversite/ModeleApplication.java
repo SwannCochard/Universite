@@ -4,6 +4,7 @@
  */
 package gestionUniversite;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -462,5 +463,24 @@ public class ModeleApplication {
     }
     public void afficherLesEtudiants() {
         this.universite.afficherLesEtudiants();
+    }
+    
+    public ArrayList<Sceance> consulterEDT(Date dateDebut, Date dateFin){
+        /*
+         * Pour créer une date de type java.sql.Date faire
+         * java.sql.Date jsqlD = java.sql.Date.valueOf( "2010-01-31" );
+         * A voir, ça peut être pratique et facilement réutilisable pour la BDD !
+         * 
+         * Pour afficher un string de la Date SQL
+         * Date date = ...; // wherever you get this from  
+         * DateFormat df = new SimpleDateFormat("yyyy-MM-dd"); 
+         * String text = df.format(date);  
+         * System.out.println("The date is: " + text);  
+         * 
+         */
+        
+        return null;
+        
+        
     }
 }
