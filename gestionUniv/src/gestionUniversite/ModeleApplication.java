@@ -464,7 +464,7 @@ public class ModeleApplication {
         this.universite.afficherLesEtudiants();
     }
     
-    public ArrayList<Sceance> consulterEDT(Date dateDebut, Date dateFin){
+    public ArrayList<Seance> consulterEDT(Date dateDebut, Date dateFin){
         /*
          * Pour créer une date de type java.sql.Date faire
          * java.sql.Date jsqlD = java.sql.Date.valueOf( "2010-01-31" );
@@ -491,6 +491,26 @@ public class ModeleApplication {
          * Récup BDD
          * Reconstruction objets BDD
          */
+        
+        ArrayList<Seance> seances = new ArrayList<Seance>();
+        String req = "";
+        ResultSet res = null;
+        
+        if(this.current.getClass().getSimpleName().equals("Personnel")){
+            //req = "select * from Seance where codeModule in (select code from Module where loginResponsable like '" + this.current.getLogin() + "')";
+            req = "select * from Seance where codeModule in (select code from Module where loginResponsable like '" + "ruqu0011" + "')";
+           
+        }
+        try {
+            res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
+            while(res.next()){
+                System.out.println("LALA");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
         
         return null;
     }

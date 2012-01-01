@@ -13,7 +13,7 @@ public class Universite {
     private ArrayList<Professeur> lesProfesseurs;
     private ArrayList<Formation> lesFormations;
     private ArrayList<Salle> lesSalles;
-    private ArrayList<Sceance> lesSceances;
+    private ArrayList<Seance> lesSeances;
     private boolean leftToCommit;
     private String nom;
     private ModeleApplication modeleApplication;
@@ -27,7 +27,7 @@ public class Universite {
         this.lesPersonnes = new ArrayList<Personne>();
         this.lesProfesseurs = new ArrayList<Professeur>();
         this.lesSalles = new ArrayList<Salle>();
-        this.lesSceances = new ArrayList<Sceance>();
+        this.lesSeances = new ArrayList<Seance>();
         this.leftToCommit = false;
     }
 

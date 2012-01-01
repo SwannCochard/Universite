@@ -25,7 +25,7 @@ public class Etudiant extends Personne {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-    public ArrayList<Sceance> consulterEDT(Date dateDebut, Date dateFin) {
+    public ArrayList<Seance> consulterEDT(Date dateDebut, Date dateFin) {
         return null;
     }
 

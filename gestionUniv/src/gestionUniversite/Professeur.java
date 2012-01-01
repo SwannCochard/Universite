@@ -50,9 +50,8 @@ public class Professeur extends Personne {
         
     }
     
-    public ArrayList<Sceance> consulterEDT(Date dateDebut, Date dateFin) {
-        return null;
-        
+    public ArrayList<Seance> consulterEDT(Date dateDebut, Date dateFin) {
+        return null;   
     }
     
     @Override

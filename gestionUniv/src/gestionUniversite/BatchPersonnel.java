@@ -87,6 +87,9 @@ public class BatchPersonnel {
                     case 9 :
                         afficherSeDeconnecter();
                         break;
+                    case 10 :
+                        afficherEDT();
+                        break;
                     default : 
                         afficherChoixIncorrect();
                         break;
@@ -300,6 +303,11 @@ public class BatchPersonnel {
                     break;
             }
         }
+        else{
+            this.modeleApplication.deconnecter();
+            System.out.println("Vous avez été déconnecté(e)");
+            this.afficherMenuPrincipal();
+        }
         } catch(InputMismatchException e) {
             System.out.println("Ceci n'est pas un choix correct.");
             scan.next();
@@ -383,5 +391,9 @@ public class BatchPersonnel {
         }
         System.out.println("Etudiant inscrit ! ");
         this.afficherMenuPersonnel();
+    }
+
+    private void afficherEDT() {
+        this.modeleApplication.consulterEDT(null, null);
     }
 }

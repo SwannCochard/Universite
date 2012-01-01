@@ -6,7 +6,7 @@ import java.util.Enumeration;
  *
  * @author Swann
  */
-public class Sceance {
+public class Seance {
     private Enumeration type;
     private String codeModule;
     private String jour;
