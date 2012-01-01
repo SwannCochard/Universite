@@ -18,6 +18,16 @@ public class Module {
         this.code = code;
     }
 
+    public Module(String nom, String code, int coefTD, int coefTP, int coefCM, int coefModule, Professeur responsable) {
+        this.nom = nom;
+        this.code = code;
+        this.coefTD = coefTD;
+        this.coefTP = coefTP;
+        this.coefCM = coefCM;
+        this.coefModule = coefModule;
+        this.responsable = responsable;
+    }
+
     public void setResponsable(Professeur responsable) {
         this.responsable = responsable;
     }
@@ -73,5 +83,10 @@ public class Module {
     public void save() {
         
     }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+    
     
 }

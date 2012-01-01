@@ -20,7 +20,7 @@ public class Professeur extends Personne {
 
 
     public Professeur(String login, String motDePasse, String nom, String prenom, Universite universite) {
-        super(0, login, motDePasse, nom, prenom, universite);
+        super(login, motDePasse, nom, prenom, universite);
     }
 
     public void saisirNote() {

@@ -8,8 +8,6 @@ package gestionUniversite;
  *
  * @author Swann
  */
-
-// Bonjour  
 public class Salle {
     private String nom;
     private int capacite;

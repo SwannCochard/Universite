@@ -9,7 +9,6 @@ package gestionUniversite;
  * @author Swann
  */
 public abstract class Personne {
-    private int identifiant;
     private String login;
     private String motDePasse;
     private String nom;
@@ -23,8 +22,7 @@ public abstract class Personne {
         this.universite = universite;
     }
 
-    public Personne(int identifiant, String login, String motDePasse, String nom, String prenom, Universite universite) {
-        this.identifiant = identifiant;
+    public Personne(String login, String motDePasse, String nom, String prenom, Universite universite) {
         this.login = login;
         this.motDePasse = motDePasse;
         this.nom = nom;
@@ -35,10 +33,6 @@ public abstract class Personne {
     
     
     public abstract void save();
-
-    public int getIdentifiant() {
-        return identifiant;
-    }
 
     public String getLogin() {
         return login;
@@ -58,10 +52,6 @@ public abstract class Personne {
                + "nom : "+nom
                + "prenom : "+prenom;
        return res;
-    }
-
-    public void setIdentifiant(int identifiant) {
-        this.identifiant = identifiant;
     }
 
     public void setLogin(String login) {

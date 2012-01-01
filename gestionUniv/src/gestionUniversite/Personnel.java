@@ -17,8 +17,8 @@ public class Personnel extends Personne {
         super(motDePasse, nom, prenom, universite);
     }
 
-    public Personnel(int identifiant, String login, String motDePasse, String nom, String prenom, Universite universite) {
-        super(identifiant, login, motDePasse, nom, prenom, universite);
+    public Personnel(String login, String motDePasse, String nom, String prenom, Universite universite) {
+        super(login, motDePasse, nom, prenom, universite);
     }
     
     public void ajouterEtudiant(String nom, String prenom, String mdp) {
@@ -36,15 +36,16 @@ public class Personnel extends Personne {
         universite.ajouterPersonne(p);
     }
 
-    public void inscrireEtudiant(String loginEtu, String codeFormation) {
-        universite.inscrireEtudiant(loginEtu, codeFormation);
+    public boolean inscrireEtudiant(String loginEtu, String codeFormation) {
+        return universite.inscrireEtudiant(loginEtu, codeFormation);
         
     }
     
-    public void ajouterModule(String nom, String codeResponsable) {
+    public boolean ajouterModule(String nom, String codeResponsable) {
         String codeModule = this.calculerCodeModule(currentFormation, nom);
         Module module = new Module(nom, codeModule);
-        universite.ajouterModule(module, currentFormation, codeResponsable);
+        boolean res = universite.ajouterModule(module, currentFormation, codeResponsable);
+        return res;
         
     }
     
@@ -55,11 +56,21 @@ public class Personnel extends Personne {
         universite.ajouterFormation(formation);
     }
     
-    public void mettreEnPlaceFormation() {
+    public boolean modifierFormation(Formation formation,String nom) {
+        if (formation == null) {
+            return false;
+        }
+        this.currentFormation = formation;
+        formation.setNom(nom);
+        return true;
         
     }
     
-    public void mettreEnPlaceModule() {
+    public boolean modifierModule(Module module, Professeur professeur, String nom) {
+        System.out.println("On a modifié un module chez Personnel");
+        module.setNom(nom);
+        module.setResponsable(professeur);
+        return true;
         
     }
     
@@ -124,6 +135,10 @@ public class Personnel extends Personne {
         codeModule = codeFormationDuModule+"-"+codeModule;
         System.out.println("code : "+codeModule);
         return codeModule;
+    }
+
+    public Formation getCurrentFormation() {
+        return currentFormation;
     }
     
 }

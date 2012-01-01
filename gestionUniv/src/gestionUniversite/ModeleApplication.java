@@ -57,13 +57,13 @@ public class ModeleApplication {
             else {
                 connected = true;
                 if (type.equals("etudiant")) {
-                    current = new Etudiant(id,login,mdp,nom,prenom, this.universite);
+                    current = new Etudiant(login,mdp,nom,prenom, this.universite);
                 }
                 if (type.equals("professeur")) {
                     current = new Professeur(login,mdp,nom,prenom, this.universite);
                 }
                 if (type.equals("personnel")) {
-                    current = new Personnel(id,login,mdp,nom,prenom,this.universite);
+                    current = new Personnel(login,mdp,nom,prenom,this.universite);
                 }
             }
         } catch (SQLException ex) {
@@ -86,27 +86,8 @@ public class ModeleApplication {
     }
     
     
-    public String ajouterPersonne(Personne personne) {
-        //String login = calculerLogin(nom, prenom);
-        
-        String nom = personne.getNom();
-        String prenom = personne.getPrenom();
-        String login = personne.getLogin();
-        String mdp = personne.getMdp();
-        String type = personne.getClass().toString().toLowerCase();
-        type = type.substring(type.lastIndexOf(".")+1);
-        //this.universite.ajouterPersonne(nom,prenom,login,mdp,type);
-        String req = "insert into Utilisateur (login,mdp,nom,prenom,type) values ('"+login+"','"+mdp+"','"+nom+"','"+prenom+"', '"+type+"')";
-        
-        ResultSet res;
-        try {
-            gestionUniversite.Connexion.getInstance().getStatement().execute(req);
-            //res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
-        } catch (SQLException ex) {
-            Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        return login;
+    public void ajouterPersonne(Personne personne) {
+        insertOrUpdateUtilisateur(personne);
     }
 
 
@@ -140,93 +121,54 @@ public class ModeleApplication {
         return login;
     }
 
-    void ajouterFormation(Formation formation) {
-        String nom = formation.getNom();
-        String code = formation.getCode();
-        String req = "select count(*) from Formation where code like '"+code+"'";
-        
-        ResultSet res;
-        try {
-            res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
-            int nbRes = 0;
-            if (res.next()) {    
-                nbRes = res.getInt(1);
-            }
-            if (nbRes == 0) {
-                req = "insert into Formation (nom,code) values ('"+nom+"','"+code+"')";
-                gestionUniversite.Connexion.getInstance().getStatement().execute(req);
-            }
-            else {
-                req = "update Formation set nom = '"+nom+"' where code like '"+code+"'";
-                gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(req);
-            }
-            //res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
-        } catch (SQLException ex) {
-            Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    void ajouterFormation(Formation formation) {       
+        insertOrUpdateFormation(formation);
     }
-    
-//    public void ajouterEtudiant(String nom, String prenom, String mdp) {
-//        String login = this.calculerLogin(nom);
-//        ((Personnel) current).ajouterEtudiant(login, nom, prenom, mdp);
-//    }
     
     public void ajouterFormation(String nom) {
         ((Personnel) current).ajouterFormation(nom);
     }
     
-    public void mettreEnPlaceModule() {
+    public boolean modifierModule(String codeModule, String codeProfesseur, String nom) {
+        if (codeModule.lastIndexOf("-") == -1) {
+            System.out.println("Module inconnu.");
+            return false;
+        }
+        String codeFormation = codeModule.substring(0,codeModule.lastIndexOf("-"));
+        Formation formation = this.universite.getFormation(codeFormation);
+        this.universite.ajouterFormation(formation);
+        Module module = this.universite.getModule(codeModule);
+        if (module == null) {
+            System.out.println("Module inconnu");
+            return false;
+        }
+        Professeur professeur = this.universite.getProfesseur(codeProfesseur);
+        if (professeur == null) {
+            System.out.println("Professeur inconnu.");
+            return false;
+        }
+        return ((Personnel)current).modifierModule(module, professeur, nom);
         
     }
     
-    public void mettreEnPLaceFormation() {
-        
+    public boolean modifierFormation(String codeFormation, String nom) {
+        Formation formation = this.universite.getFormation(codeFormation);
+        return ((Personnel)current).modifierFormation(formation, nom);
     }
 
     public Personne getCurrent() {
         return current;
     }
 
-    public void inscrireEtudiant(String login, String codeFormation) {
-        ((Personnel) current).inscrireEtudiant(login, codeFormation);
+    public boolean inscrireEtudiant(String login, String codeFormation) {
+        return ((Personnel) current).inscrireEtudiant(login, codeFormation);
     }
     public void inscrireEtudiant(Etudiant etudiant, Formation formation) {
-        String loginEtu = etudiant.getLogin();
-        String codeFormation = formation.getCode();
-        String req = "insert into Participe (login,codeFomration) values ('"+loginEtu+"','"+codeFormation+"')";
-        
-        ResultSet res;
-        try {
-            gestionUniversite.Connexion.getInstance().getStatement().execute(req);
-        } catch (SQLException ex) {
-            Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        inscrireOrUpdateEtudiant(etudiant, formation);
     }
 
     void ajouterModule(Module module, Formation formation) {
-        System.out.println("Ajouter module "+module.getNom());
-        String nom = module.getNom();
-        String code = module.getCode();
-        String req = "select count(*) from Module where code like '"+code+"'";
-        String responsable = module.getResponsable().getLogin();
-        ResultSet res;
-        try {
-            res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
-            int nbRes = 0;
-            if (res.next()) {    
-                nbRes = res.getInt(1);
-            }
-            if (nbRes == 0) {
-                req = "insert into Module (nom,code,responsable) values ('"+nom+"','"+code+"','"+responsable+"')";
-                gestionUniversite.Connexion.getInstance().getStatement().execute(req);
-            }
-            else {
-                req = "update Module set nom = '"+nom+"' where code like '"+code+"'";
-                gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(req);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        insertOrUpdateModule(module,formation);
     }
     
     public void commit() {
@@ -260,5 +202,265 @@ public class ModeleApplication {
         }
         return professeurs;
     }
+
+    public void insertOrUpdateModule(Module module, Formation formation) {
+        String nom = module.getNom();
+        String code = module.getCode();
+        int coefTD = module.getCoefTD();
+        int coefCM = module.getCoefCM();
+        int coefTP = module.getCoefTP();
+        int coefModule = module.getCoefModule();
+        String req = "select count(*) from Module where code like '"+code+"'";
+        String responsable = module.getResponsable().getLogin();
+        ResultSet res;
+        try {
+            res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
+            int nbRes = 0;
+            if (res.next()) {    
+                nbRes = res.getInt(1);
+            }
+            if (nbRes == 0) {
+                req = "insert into Module (nom,code,loginResponsable,coeffTP,coeffTD,coeffCM,coeffModule) values ('"+nom+"','"+code+"','"+responsable+"',1,1,1,1)";
+                gestionUniversite.Connexion.getInstance().getStatement().execute(req);
+            }
+            else {
+                req = "update Module set nom = '"+nom+"', coeffTP = "+coefTP+", coeffTD = "+coefTD+",coeffCM = "+coefCM+",coeffModule = "+coefModule+", loginResponsable = '"+module.getResponsable().getLogin()+"' where code like '"+code+"'";
+                gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(req);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void inscrireOrUpdateEtudiant(Etudiant etudiant, Formation formation) {
+        if (formation != null) {
+            String loginEtu = etudiant.getLogin();
+            String req = "delete from Participe where login like '"+etudiant.getLogin()+"'";
+            ResultSet res;
+            try {
+                gestionUniversite.Connexion.getInstance().getStatement().execute(req);
+            } catch (SQLException ex) {
+                Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            for (Module module : formation.getLesModules()) {
+                String codeModule = module.getCode();
+                req = "insert into Participe (login,codeModule,noteCM,noteTP,noteTD) values ('"+loginEtu+"','"+codeModule+"',0,0,0)";
+                try {
+                    gestionUniversite.Connexion.getInstance().getStatement().execute(req);
+                } catch (SQLException ex) {
+                    Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        
+    }
+
+    public void insertOrUpdateFormation(Formation formation) {
+        String nom = formation.getNom();
+        String code = formation.getCode();
+        String req = "select count(*) from Formation where code like '"+code+"'";
+        
+        ResultSet res;
+        try {
+            res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
+            int nbRes = 0;
+            if (res.next()) {    
+                nbRes = res.getInt(1);
+            }
+            if (nbRes == 0) {
+                req = "insert into Formation (nom,code,nomUniversite,nomSalleCM,nomSalleTD) values ('"+nom+"','"+code+"','UHP','uneSalleCM','uneSalleTD')";
+                gestionUniversite.Connexion.getInstance().getStatement().execute(req);
+            }
+            else {
+                req = "update Formation set nom = '"+nom+"' where code like '"+code+"'";
+                gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(req);
+            }
+            //res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void insertOrUpdateUtilisateur(Personne personne) {
+        String nom = personne.getNom();
+        String prenom = personne.getPrenom();
+        String login = personne.getLogin();
+        String mdp = personne.getMdp();
+        String type = personne.getClass().toString().toLowerCase();
+        type = type.substring(type.lastIndexOf(".")+1);
+        String req = "select count(*) from Utilisateur where login like '"+login+"'";
+        ResultSet res;
+        try {
+            res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
+            int nbRes = 0;
+            if (res.next()) {    
+                nbRes = res.getInt(1);
+            }
+            if (nbRes == 0) {
+                req = "insert into Utilisateur (login,mdp,nom,prenom,type, nomUniversite) values ('"+login+"','"+mdp+"','"+nom+"','"+prenom+"', '"+type+"','"+this.universite.getNom()+"')";
+                System.out.println("req : "+req);
+                gestionUniversite.Connexion.getInstance().getStatement().execute(req);
+            }
+            else {
+                req = "update Utilisateur set nom = '"+nom+"',mdp = '"+mdp+"',prenom = '"+prenom+"', nomUniversite = '"+this.universite.getNom()+"' where login like '"+login+"'";
+                gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(req);
+            }
+        } catch (SQLException ex) {
+            System.out.println("req : "+req);
+            Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    ArrayList<Module> getModules(String dejaPresents) {
+        ArrayList<Module> modules = new ArrayList<Module>();
+        String req = "";
+        if(dejaPresents.isEmpty()) {
+            req = "select * from Module";
+ 
+        }
+        else {
+            req = "select * from Module where code not in ("+dejaPresents+")";
+        }
+        ResultSet res;
+        try {
+            res = gestionUniversite.Connexion.getInstance().getStatement2().executeQuery(req);
+            while (res.next()) {
+                String code = res.getString("code");
+                String nom = res.getString("nom");
+                int coeffTP = res.getInt("coeffTP");
+                int coeffTD = res.getInt("coeffTD");
+                int coeffCM = res.getInt("coeffCM");
+                int coeffModule = res.getInt("coeffModule");
+                String loginResponsable = res.getString("loginResponsable");
+                Professeur p = this.universite.getProfesseur(loginResponsable);
+                Module m = new Module(nom,code,coeffTD,coeffTP,coeffCM,coeffModule,p);
+                modules.add(m);
+            }
+            //res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return modules;
+    }
+
+    public ArrayList<Formation> getFormations(String dejaPresents) {
+        ArrayList<Formation> formations = new ArrayList<Formation>();
+        String req = "";
+        if(dejaPresents.isEmpty()) {
+            req = "select * from Formation";
+ 
+        }
+        else {
+            req = "select * from Formation where code not in ("+dejaPresents+")";
+        }
+        ResultSet res = null;
+        try {
+            res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
+            while (res.next()) {
+                String code = res.getString("code");
+                String nom = res.getString("nom");
+                Formation formation = new Formation(nom, code);
+                //formation.setLesModules(this.reconstruireModules(formation.getCode()));
+                formations.add(formation);
+                
+            }
+
+            //res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (res != null) {
+                try {
+                    res.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        for (Formation formation : formations) {
+                formation.setLesModules(this.reconstruireModules(formation.getCode()));
+            }
+        return formations;    
+    }
+
+    ArrayList<Etudiant> getEtudiant(String dejaPresents) {
+        ArrayList<Etudiant> etudiants = new ArrayList<Etudiant>();
+        String req = "";
+        if(dejaPresents.isEmpty()) {
+            req = "select * from Utilisateur where type = 'etudiant'";
+ 
+        }
+        else {
+            req = "select * from Utilisateur where type = 'etudiant' and login not in ("+dejaPresents+")";
+        }
+        ResultSet res;
+        try {
+            res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
+            while (res.next()) {
+                String login = res.getString("login");
+                String mdp = res.getString("mdp");
+                String nom = res.getString("nom");
+                String prenom = res.getString("prenom");
+                Etudiant e = new Etudiant(login, mdp, nom, prenom,universite);
+                etudiants.add(e);
+            }
+            //res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return etudiants;
+    }
+
+    public ArrayList<Module> reconstruireModules(String codeFormation) {
+        ArrayList<Module> modules = new ArrayList<Module>();
+        String req = "select * from Module where code like '"+codeFormation+"-%'";
+        ResultSet resbis = null;
+        try { 
+            resbis = gestionUniversite.Connexion.getInstance().getStatement2().executeQuery(req);
+            while (resbis.next()) {
+                String code = resbis.getString("code");
+                String nom = resbis.getString("nom");
+                int coeffTP = resbis.getInt("coeffTP");
+                int coeffTD = resbis.getInt("coeffTD");
+                int coeffCM = resbis.getInt("coeffCM");
+                int coeffModule = resbis.getInt("coeffModule");
+                String loginResponsable = resbis.getString("loginResponsable");
+                Professeur p = this.universite.getProfesseur(loginResponsable);
+                Module m = new Module(nom,code,coeffTD,coeffTP,coeffCM,coeffModule,p);
+                modules.add(m);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (resbis != null) {
+                try {
+                    resbis.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        
+        return modules;
+        
+    }
+
+    boolean leftToCommit() {
+        return this.universite.leftToCommit();
+    }
     
+    public void afficherLesProfesseurs() {
+        this.universite.afficherLesProfesseurs();
+    }
+    
+    public void afficherLesFormations() {
+        this.universite.afficherLesFormations();
+    }
+    
+    public void afficherLesModules() {
+        this.universite.afficherLesModules();
+    }
+    public void afficherLesEtudiants() {
+        this.universite.afficherLesEtudiants();
+    }
 }

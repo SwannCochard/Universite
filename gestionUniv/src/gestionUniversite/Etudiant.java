@@ -11,13 +11,13 @@ import java.util.Date;
  * @author Swann
  */
 public class Etudiant extends Personne {
-
+    private Formation formation;
     public Etudiant(String motDePasse, String nom, String prenom, Universite universite) {
         super(motDePasse, nom, prenom, universite);
     }
 
-    public Etudiant(int identifiant, String login, String motDePasse, String nom, String prenom, Universite universite) {
-        super(identifiant, login, motDePasse, nom, prenom, universite);
+    public Etudiant(String login, String motDePasse, String nom, String prenom, Universite universite) {
+        super(login, motDePasse, nom, prenom, universite);
     }
     
     public void consulterNotes() {
@@ -32,5 +32,15 @@ public class Etudiant extends Personne {
     public void save() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public Formation getFormation() {
+        return formation;
+    }
+
+    public void setFormation(Formation formation) {
+        this.formation = formation;
+    }
+    
+    
     
 }

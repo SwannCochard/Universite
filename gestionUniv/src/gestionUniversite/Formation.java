@@ -39,6 +39,15 @@ public class Formation {
     public ArrayList<Module> getLesModules() {
         return this.modules;
     }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public void setLesModules(ArrayList<Module> modules) {
+        this.modules = modules;
+    }
+    
     
     
     
