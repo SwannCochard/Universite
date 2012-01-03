@@ -12,6 +12,10 @@ public class Professeur extends Personne{
     public Professeur(String motDePasse, String nom, String prenom, Universite universite) {
         super(motDePasse, nom, prenom, universite);
     }
+    
+    public Professeur(String login, String motDePasse, String nom, String prenom, Universite universite) {
+        super(login, motDePasse, nom, prenom, universite);
+    }
 
     public ArrayList<Module> getEstResponsable() {
         return estResponsable;
