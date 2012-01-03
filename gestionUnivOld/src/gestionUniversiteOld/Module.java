@@ -2,21 +2,20 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package gestionUniversite;
+package gestionUniversiteOld;
 
 /**
  *
- * @author gaelvarlet
+ * @author Swann
  */
-public class Module extends GroupeEtudiants {
+public class Module {
+    
     private String nom,code;
     private int coefTD, coefTP, coefCM, coefModule;
     private Professeur responsable;
-    
     public Module(String nom, String code) {
         this.nom = nom;
         this.code = code;
-        this.responsable = null;
     }
 
     public Module(String nom, String code, int coefTD, int coefTP, int coefCM, int coefModule, Professeur responsable) {
@@ -29,12 +28,24 @@ public class Module extends GroupeEtudiants {
         this.responsable = responsable;
     }
 
+    public void setResponsable(Professeur responsable) {
+        this.responsable = responsable;
+    }
+
+    public Professeur getResponsable() {
+        return responsable;
+    }
+    
+    public void calculerMoyenne() {
+        
+    }
+
     public String getCode() {
         return code;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public String getNom() {
+        return nom;
     }
 
     public int getCoefCM() {
@@ -68,20 +79,13 @@ public class Module extends GroupeEtudiants {
     public void setCoefTP(int coefTP) {
         this.coefTP = coefTP;
     }
-
-    public String getNom() {
-        return nom;
+    
+    public void save() {
+        
     }
 
     public void setNom(String nom) {
         this.nom = nom;
     }
-
-    public Professeur getResponsable() {
-        return responsable;
-    }
-
-    public void setResponsable(Professeur responsable) {
-        this.responsable = responsable;
-    }
+    
 }

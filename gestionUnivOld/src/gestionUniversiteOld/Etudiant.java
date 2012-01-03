@@ -1,15 +1,18 @@
-package gestionUniversite;
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package gestionUniversiteOld;
 
 import java.sql.Date;
 import java.util.ArrayList;
 
 /**
  *
- * @author gaelvarlet
+ * @author Swann
  */
-public class Etudiant extends Personne implements ComposanteFac {
-    private Universite universite;
-    
+public class Etudiant extends Personne {
+    private Formation formation;
     public Etudiant(String motDePasse, String nom, String prenom, Universite universite) {
         super(motDePasse, nom, prenom, universite);
     }
@@ -27,12 +30,15 @@ public class Etudiant extends Personne implements ComposanteFac {
     }
 
     @Override
-    public double getMoyenne() {
+    public void save() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
-    public int getNbEtudiants() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Formation getFormation() {
+        return formation;
     }
+
+    public void setFormation(Formation formation) {
+        this.formation = formation;
+    }   
 }

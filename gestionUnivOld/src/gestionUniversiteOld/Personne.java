@@ -1,19 +1,19 @@
-/*
+ /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package gestionUniversite;
+package gestionUniversiteOld;
 
 /**
  *
- * @author gaelvarlet
+ * @author Swann
  */
 public abstract class Personne {
     private String login;
     private String motDePasse;
     private String nom;
     private String prenom;
-    private Universite universite;
+    protected Universite universite;
     
     public Personne(String motDePasse, String nom, String prenom, Universite universite) {
         this.motDePasse = motDePasse;
@@ -30,6 +30,10 @@ public abstract class Personne {
         this.universite = universite;
     }
     
+    
+    
+    public abstract void save();
+
     public String getLogin() {
         return login;
     }
@@ -57,4 +61,7 @@ public abstract class Personne {
     String getMdp() {
         return this.motDePasse;
     }
+    
+    
+    
 }

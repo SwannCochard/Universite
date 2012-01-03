@@ -1,8 +1,12 @@
-package gestionUniversite;
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package gestionUniversiteOld;
 
 /**
  *
- * @author gaelvarlet
+ * @author Swann
  */
 public class Salle {
     private String nom;
@@ -28,6 +32,7 @@ public class Salle {
     public void setNom(String nom) {
         this.nom = nom;
     }
+    
     
     
 }
