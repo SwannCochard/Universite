@@ -1,8 +1,10 @@
 package gestionUniversite;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -120,7 +122,10 @@ class ModeleApplication {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    void consulterEDT(Object object, Object object0) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public ArrayList<Seance> consulterEDT(Date dateDebut, Date dateFin) {
+        System.out.println("Debut : " + dateDebut);
+        System.out.println("Fin : " + dateFin);
+        return null;
+        //throw new UnsupportedOperationException("Not yet implemented");
     }
 }
