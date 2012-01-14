@@ -8,12 +8,12 @@ package gestionUniversite;
  *
  * @author gaelvarlet
  */
-public abstract class Personne implements Comparable {
-    protected String login;
-    protected String motDePasse;
-    protected String nom;
-    protected String prenom;
-    protected Universite universite;
+public abstract class Personne {
+    private String login;
+    private String motDePasse;
+    private String nom;
+    private String prenom;
+    private Universite universite;
     
     public Personne(String motDePasse, String nom, String prenom, Universite universite) {
         this.motDePasse = motDePasse;

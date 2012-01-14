@@ -6,7 +6,6 @@ package gestionUniversite;
 
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -18,22 +17,34 @@ public class BatchPersonnel {
     private Scanner scan;
     private ModeleApplication modeleApplication;
     private Universite universite;
-
-    public BatchPersonnel(Scanner scan, ModeleApplication modeleApplication, Universite universite) {
-        this.scan = scan;
-        this.modeleApplication = modeleApplication;
-        this.universite = universite;
+    public BatchPersonnel() {
+        this.scan = new Scanner(System.in);
+        this.modeleApplication = new ModeleApplication();
+        this.universite = new Universite("UHP",this.modeleApplication);
+        this.modeleApplication.setUniversite(universite);
     }
     
     public void afficherMenuPrincipal() {
         scan = scan.reset();
+        System.out.println("Bienvenue dans votre université !");
+        System.out.println("Veuillez vous connecter ");
+        do {
+            System.out.print("login : ");
+            String login = scan.nextLine();
+            System.out.print("mot de passe : ");
+            String mdp = scan.nextLine();
+            Boolean connect = this.modeleApplication.connecter(login, mdp);
+            if (!connect) {
+                System.out.println("erreur de login/mot de passe. Veuillez réessayer");
+            }
+        } while (!this.modeleApplication.isConnected());
         afficherMenuPersonnel();
     }
 
     private void afficherMenuPersonnel() {
         try {
         
-            System.out.println("=======================================================");
+            System.out.println(" =======================================================");
             System.out.println("Bienvenue dans votre espace personnel. Vous pouvez :");
             System.out.println("1. Ajouter une personne");
             System.out.println("2. Ajouter une formation et les modules correspondants");
@@ -42,8 +53,9 @@ public class BatchPersonnel {
             System.out.println("5. Mettre en place une formation");
             System.out.println("6. Inscrire un étudiant à une formation");
             System.out.println("7. Calculer les moyennes");
+            System.out.println("8. Enregistrer les modifications");
             System.out.println("9. Vous deconnecter");
-            System.out.println("=======================================================");
+            System.out.println(" =======================================================");
             System.out.println("Quel est votre choix ? (tapez le chiffre correspondant)");
             
             int choix = scan.nextInt();
@@ -71,6 +83,9 @@ public class BatchPersonnel {
                     case 7 :
                         afficherCalculerMoyennes();
                         break;     
+                    case 8 :
+                        afficherCommiter();
+                        break;
                     case 9 :
                         afficherSeDeconnecter();
                         break;
@@ -167,8 +182,7 @@ public class BatchPersonnel {
             System.out.println("Veuillez entrer un nom correct.");
             nom = scan.nextLine();
         }
-        ((Personnel) this.modeleApplication.getCurrent()).ajouterFormation(nom);
-        //this.modeleApplication.ajouterFormation(nom);
+        this.modeleApplication.ajouterFormation(nom);
         System.out.println("Formation ajoutée.");
         this.afficherAjouterModule();
         //this.afficherMenuPersonnel();
@@ -255,11 +269,53 @@ public class BatchPersonnel {
     }
 
     private void afficherSeDeconnecter() {
-        this.modeleApplication.commit();
-        System.out.println("Modifications enregistrées.");
-        this.modeleApplication.deconnecter();
-        System.out.println("Vous êtes déconnecté. ");
-        this.afficherMenuPrincipal();  
+        try {
+        if(this.modeleApplication.leftToCommit()) {
+            System.out.println("Tout n'a pas été sauvegardé. Voulez vous : ");
+            System.out.println("1. Quitter sans sauvergarder");
+            System.out.println("2. Sauvergarder et quitter");
+            System.out.println("3. Revenir à l'écran d'accueil");
+            int choix = scan.nextInt();
+//        while (type != 1 || type !=2 || type !=3) {
+//            System.out.println("Type invalide."+type);
+//            System.out.print("type ? ( 1 : etudiant, 2 : professeur, 3 : personnel)");
+//            type = scan.nextInt();
+//            scan.next();
+//        }
+        
+            switch(choix){
+                case 1 :
+                    this.modeleApplication.deconnecter();
+                    System.out.println("Vous êtes déconnecté.");
+                    this.afficherMenuPrincipal();
+                    break;
+                case 2 :
+                    this.modeleApplication.commit();
+                    System.out.println("Modifications enregistrées.");
+                    this.modeleApplication.deconnecter();
+                    System.out.println("Vous êtes déconnecté. ");
+                    this.afficherMenuPrincipal();
+                    break;
+                case 3 : 
+                    this.afficherMenuPersonnel();
+                    break;
+                default :
+                    System.out.println("Ceci n'est pas une entrée valide. Veuillez recommencer");
+                    this.afficherMenuPersonnel();
+                    break;
+            }
+        }
+        else{
+            this.modeleApplication.deconnecter();
+            System.out.println("Vous avez été déconnecté(e)");
+            this.afficherMenuPrincipal();
+        }
+        } catch(InputMismatchException e) {
+            System.out.println("Ceci n'est pas un choix correct.");
+            scan.next();
+            this.afficherSeDeconnecter();
+        }
+        
     }
 
     private void afficherChoixIncorrect() {
