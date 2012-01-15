@@ -7,6 +7,7 @@ package gestionUniversite;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -40,7 +41,8 @@ public class BatchProfesseur {
             System.out.println("Bienvenue dans votre espace personnel. Vous pouvez :");
             System.out.println("1. Fixer un coefficient");
             System.out.println("2. Afficher Emploi du temps");
-            System.out.println("3. Ajouter une Séance");
+            System.out.println("3. Ajouter une séance");
+            System.out.println("4. Réserver une salle");
             System.out.println("8. Quitter");
             System.out.println(" =======================================================");
             System.out.println("Quel est votre choix ? (tapez le chiffre correspondant)");
@@ -58,12 +60,16 @@ public class BatchProfesseur {
                     case 3 : 
                         ajouterSeance();
                         break;
+                    case 4 : 
+                        reserverSalle();
+                        break;
                     case 8 : 
-                        return;
+                        System.exit(0);
                     default : 
                         afficherChoixIncorrect();
                         break;
             }
+            afficherMenuPrincipal();
         } catch(InputMismatchException e) {
             System.out.println("Ceci n'est pas un choix correct.");
             scan.next();
@@ -147,22 +153,29 @@ public class BatchProfesseur {
         
         ArrayList<Seance> seances = this.modeleApplication.consulterEDTProfesseur(dateDebut, dateFin, (Professeur) this.modeleApplication.getCurrent());
         
+        Collections.sort(seances);
+        
         System.out.println("\n==============================");
         
         String dayOfWeek = "";
         if(seances != null & seances.size() > 0){
             for(Seance s : seances){
                 SimpleDateFormat formatterJour = new SimpleDateFormat ("E");
-                String jour = formatterJour.format(dateDebut);
+                String jour = formatterJour.format(s.getDate());
                 SimpleDateFormat formatterDate = new SimpleDateFormat ("dd.MM.yyyy");
-                String date = formatterDate.format(dateDebut);
-                if(!dayOfWeek.equals(jour)){
+                String date = formatterDate.format(s.getDate());
+                if(!dayOfWeek.equals(date)){
                     System.out.println("" + jour + " " + date);
-                    dayOfWeek = jour;
+                    dayOfWeek = date;
                 }
                 
                 System.out.println("\t" + s.getHeure() + "h00 " + (s.getHeure() + s.getDuree()) + "h00");
-                System.out.println("\t  |" + s.getCodeModule() + ", Salle : " + s.getSalle().getNom());
+                System.out.print("\t  |" + s.getCodeModule() + ", Salle : ");
+                if(s.getSalle() == null){
+                    System.out.println("null");
+                }else{
+                    System.out.println(s.getSalle().getNom());
+                }
 
             }
         }else{
@@ -219,7 +232,6 @@ public class BatchProfesseur {
         int indice = scan.nextInt();
         if (indice < 1 || indice > modules.size()+1) {
             System.out.println("Cet indice n'est pas bon. Retour au choix de module.");
-            this.afficherFixerCoefficient();
         }
         
         // Type
@@ -239,6 +251,7 @@ public class BatchProfesseur {
         int dureeCours = calculerDureeCours();
         
         Seance s = new Seance(typeCours, modules.get(indice-1).getCode(), dateCours, heureCours, dureeCours, null);
+        universite.addSeance(s);
         
         // Salle
         Salle salleCours = calculerSalleCours(s, (Formation)modules.get(indice - 1).getSuccessor());
@@ -285,15 +298,47 @@ public class BatchProfesseur {
             reponse = scan.next();
             if(reponse.equals("y") || reponse.equals("n")){
                 if(reponse.equals("y")){
-                    this.modeleApplication.reserverSalle(seance, formation);
+                    boolean b = this.modeleApplication.reserverSalle(seance, formation);
+                    if(!b) System.out.println("Erreur : Aucune salle n'est disponible pour cet horaire");
                 }else{
                     System.out.println("Vous pourrez ajouter la séance plus tard");
                 }
             }else{
                 calculerSalleCours(seance, formation);
             }
+        }        
+        return s;
+    }
+
+    private void reserverSalle() {
+        System.out.println("Liste de vos modules :");
+        Professeur professeur = (Professeur) this.modeleApplication.getCurrent();
+        ArrayList<Seance> seances = this.universite.getSeancesParProfesseur(professeur);
+        
+        if (seances.isEmpty()) {
+            System.out.println("Vous n'avez aucune séances");
+            try {
+                Thread.currentThread().sleep(1000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(BatchProfesseur.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            this.afficherMenuPersonnel();
         }
         
-        return s;
-    }    
+        for (int i = 0; i< seances.size(); i++) {
+            System.out.println(i+1+"- "+seances.get(i).toString());
+        }
+        System.out.println("Pour quel module souhaitez vous fixer une séance ?");
+        int indice = scan.nextInt();
+        if (indice < 1 || indice > seances.size()+1) {
+            System.out.println("Cet indice n'est pas bon. Retour au choix de module.");
+        }
+        
+        Seance s = seances.get(indice - 1);
+        Module m = universite.getModule(s.getCodeModule());
+        
+        this.modeleApplication.reserverSalle(s, (Formation)m.getSuccessor());
+        
+        System.out.println("Salle réservée : " + s.getSalle().getNom());
+    }
 }

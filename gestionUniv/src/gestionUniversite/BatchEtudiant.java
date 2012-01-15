@@ -47,11 +47,12 @@ public class BatchEtudiant {
                         afficherEDT();
                         break;
                     case 8 : 
-                        return;
+                        System.exit(0);
                     default : 
                         afficherChoixIncorrect();
                         break;
             }
+            afficherMenuPrincipal();
         } catch(InputMismatchException e) {
             System.out.println("Ceci n'est pas un choix correct.");
             scan.next();

@@ -128,8 +128,7 @@ class ModeleApplication {
         this.rapatrierFormations();
         this.rapatrierPersonnels();
         this.rapatrierEtudiants();
-        this.rapatrierSeances();  
-        universite.afficherLesEtudiants();
+        this.rapatrierSeances();
         
         //universite.afficherLesFormations();
     }
@@ -243,7 +242,7 @@ class ModeleApplication {
     private void rapatrierSeances() {
         ArrayList<Seance> seances = new ArrayList<Seance>();
         String req = "";
-        req = "select * from Seance ORDER BY DATE, HEURE";
+        req = "select * from Seance ORDER BY DATE, HEURE ASC";
 
         ResultSet res;
         try {
@@ -406,7 +405,34 @@ class ModeleApplication {
         universite.ajouterSeance(seance);
     }
 
-    public void reserverSalle(Seance seance, Formation formation) {
-        System.out.println("Reserver une salle !");
+    public boolean reserverSalle(Seance seance, Formation formation) {
+        ArrayList<Seance> seances = universite.getSeancesJourHeure(seance.getDate(), seance.getHeure(), seance.getDuree());
+        ArrayList<Salle> salles = universite.getLesSalles();
+        ArrayList<Salle> sallesUtilisees = new ArrayList<Salle>();
+        
+        for(Seance sc : seances){
+            if(sc.getSalle() != null)
+                sallesUtilisees.add(sc.getSalle());
+        }
+        
+        int nbEtudiants = formation.getNbEtudiants();
+        
+        int i = 0;
+        Salle salle = null;
+        
+        while(salle == null & i < salles.size()){
+            Salle s = salles.get(i);
+            if(!sallesUtilisees.contains(s) & s.getCapacite() >= nbEtudiants){
+                salle = s;
+            }
+            i++;
+        }
+        
+        if(salle != null){
+            seance.setSalle(salle);
+            return true;
+        }else{
+            return false;
+        }
     }
 }

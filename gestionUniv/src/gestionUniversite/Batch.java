@@ -21,7 +21,7 @@ public class Batch {
         this.modeleApplication = new ModeleApplication();
         this.universite = new Universite("UHP",this.modeleApplication);
         this.modeleApplication.setUniversite(universite);
-        //Collections.sort(this.universite.getLesPersonnes());
+        Collections.sort(this.universite.getLesPersonnes());
     }
     
     public void afficherMenuPrincipal() {

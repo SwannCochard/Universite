@@ -78,6 +78,11 @@ public class Formation extends GroupeEtudiants {
     public void setSalleTD(Salle salleTD) {
         this.salleTD = salleTD;
     }
+    
+    @Override
+    public int getNbEtudiants(){
+        return etudiants.size();
+    }
 
     @Override
     public String toString() {

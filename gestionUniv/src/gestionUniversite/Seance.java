@@ -7,7 +7,7 @@ import java.util.Enumeration;
  *
  * @author gaelvarlet
  */
-public class Seance {
+public class Seance implements Comparable{
     private String type;
     private String codeModule;
     private Date date;
@@ -70,5 +70,31 @@ public class Seance {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return type + " de " + codeModule + " du " + date + " de " + heure + "h à " + (heure+duree) + "h";
+    }
+
+    @Override
+    public int compareTo(Object t) {
+        Seance d = (Seance) t;
+        int i = 0;
+        
+        if(d.getDate().before(this.getDate())){
+            i = 1;
+        }
+        if(d.getDate().after(this.getDate())){
+            i = -1;
+        }
+        if(d.getDate().equals(this.getDate())){
+            if(d.getHeure() < this.getHeure()){
+                i = 1;
+            }else{
+                i = 0;
+            }
+        }
+        return i;
     }
 }

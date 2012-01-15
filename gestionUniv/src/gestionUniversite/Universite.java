@@ -253,6 +253,7 @@ public class Universite extends GroupeEtudiants {
             System.out.println(e.getLogin());
         }
     }
+    
     public ArrayList<Module> getModulesParProfesseur(Professeur professeur) {
         ArrayList<Module> result = new ArrayList<Module>();
         for (Formation formation : this.lesFormations) {
@@ -363,11 +364,20 @@ public class Universite extends GroupeEtudiants {
         }
         return seances;
     }
-
-    void afficherLesEtudiants() {
-        for(Etudiant f : lesEtudiants){
-            System.out.println(((Formation)f.getSuccessor()).getNom());
+    
+    public ArrayList<Seance> getSeancesJourHeure(Date date, int heure, int duree){
+        ArrayList<Seance> seances = new ArrayList<Seance>();
+        for(Seance s : lesSeances){
+            if((s.getDate().equals(date))){
+                if(s.getHeure() + s.getDuree() > heure){
+                    if(s.getHeure() < heure+duree){
+                        seances.add(s);
+                    }
+                }
+                
+            }
         }
+        return seances;
     }
 
     public Etudiant getEtudiant(String log) {
@@ -385,5 +395,38 @@ public class Universite extends GroupeEtudiants {
 
     public void ajouterSeance(Seance seance) {
         this.lesSeances.add(seance);
+    }
+    
+    public Module getModule(String codeModule) {
+        Module module = null;
+        boolean trouve = false;
+        int i = 0;
+        while(!trouve && i < this.lesFormations.size()) {
+           Formation formation = this.lesFormations.get(i);  
+           for(Module m : formation.getModules()) {
+               if(m.getCode().equals(codeModule)) {
+                   module = m;
+                }
+           }
+           i++;
+           
+        }
+        return module;
+    }
+
+    ArrayList<Seance> getSeancesParProfesseur(Professeur professeur) {
+        ArrayList<Seance> seances = new ArrayList<Seance>();
+        ArrayList<Module> modules = getModulesParProfesseur(professeur);
+        for(Seance s : lesSeances){
+            Module m = getModule(s.getCodeModule());
+            if(modules.contains(m)){
+                seances.add(s);
+            }
+        }
+        return seances;
+    }
+
+    public void addSeance(Seance s) {
+        lesSeances.add(s);
     }
 }
