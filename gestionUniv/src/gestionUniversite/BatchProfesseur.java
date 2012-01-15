@@ -295,6 +295,5 @@ public class BatchProfesseur {
         }
         
         return s;
-    }
-    
+    }    
 }

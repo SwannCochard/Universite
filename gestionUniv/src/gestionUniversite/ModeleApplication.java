@@ -377,8 +377,7 @@ class ModeleApplication {
                     seancesValides.add(s);
                 }
             }
-        }
-        
+        }        
         return seancesValides;
     }
     
