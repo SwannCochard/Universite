@@ -82,8 +82,5 @@ public class Formation extends GroupeEtudiants {
     @Override
     public String toString() {
         return "Formation{" + "modules=" + modules + ", etudiants=" + etudiants.size() + ", nom=" + nom + ", code=" + code + ", salleCM=" + salleCM + ", salleTD=" + salleTD + '}';
-    }
-    
-    
-    
+    }  
 }

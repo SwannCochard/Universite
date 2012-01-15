@@ -242,7 +242,7 @@ class ModeleApplication {
     private void rapatrierSeances() {
         ArrayList<Seance> seances = new ArrayList<Seance>();
         String req = "";
-        req = "select * from Seance";
+        req = "select * from Seance ORDER BY DATE, HEURE";
 
         ResultSet res;
         try {
@@ -396,4 +396,6 @@ class ModeleApplication {
         
         return seancesValides;
     }
+    
+    
 }
