@@ -124,8 +124,8 @@ class ModeleApplication {
 //        this.lesSalles = new ArrayList<Salle>();
 //        this.lesSeances = new ArrayList<Seance>();
         this.rapatrierSalles();
-        this.rapatrierFormations();
         this.rapatrierProfesseurs();
+        this.rapatrierFormations();
         this.rapatrierPersonnels();
         this.rapatrierEtudiants();
         this.rapatrierSeances();  
@@ -311,7 +311,6 @@ class ModeleApplication {
                 String loginResponsable = resbis.getString("loginResponsable");
                 Professeur p = this.universite.getProfesseur(loginResponsable);
                 Module m = new Module(nom,code,coeffTD,coeffTP,coeffCM,coeffModule,p);
-                System.out.println("Code Module : "+m.getCode());
                 modules.add(m);
             }
         } catch (SQLException ex) {

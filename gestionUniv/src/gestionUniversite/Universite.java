@@ -176,6 +176,7 @@ public class Universite extends GroupeEtudiants {
         int i = 0;
         Professeur p = null;
         while (!trouve && i < this.lesProfesseurs.size()) {
+            System.out.println("" + this.lesProfesseurs.get(i).getLogin());
             if (this.lesProfesseurs.get(i).getLogin().equals(loginResponsable)) {
                 p = this.lesProfesseurs.get(i);
                 trouve = true;        
