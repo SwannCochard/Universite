@@ -191,7 +191,7 @@ public class BatchProfesseur {
         try{
             System.out.println("Format : yyyy-mm-dd");
             String dateALire;
-            dateALire = scan.nextLine();
+            dateALire = scan.next();
             
             return java.sql.Date.valueOf( dateALire );
         }catch(IllegalArgumentException e){
@@ -288,9 +288,11 @@ public class BatchProfesseur {
         
         if(typeCours.equals("CM")){
             s = formation.getSalleCM();
+            seance.setSalle(s);
         }
         if(typeCours.equals("TD")){
             s = formation.getSalleTD();
+            seance.setSalle(s);
         }
         if(typeCours.equals("TP")){
             String reponse;

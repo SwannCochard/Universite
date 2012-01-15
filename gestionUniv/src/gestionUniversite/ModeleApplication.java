@@ -487,7 +487,7 @@ class ModeleApplication {
                    int coeffModule = module.getCoefModule();
                    String responsable = module.getResponsable().getLogin();
                    
-                   String requete2 = "insert into Module value ('"+nom2+"','"+code2+"','"+coeffTP+"','"+coeffTD+"','"+coeffCM+"','"+coeffModule+"','"+responsable+"','"+code+"');";
+                   String requete2 = "insert into Module value ('"+code2+"','"+nom2+"','"+coeffTP+"','"+coeffTD+"','"+coeffCM+"','"+coeffModule+"','"+responsable+"','"+code+"');";
                    gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(requete2);
                 }
             } catch (SQLException ex) {
@@ -541,8 +541,10 @@ class ModeleApplication {
             Date date = seance.getDate();
             int heure = seance.getHeure();
             int duree = seance.getDuree();
+                        
             String salle = seance.getSalle().getNom();
-              
+            
+
             String requete = "insert into Seance value ('"+type+"','"+date+"','"+heure+"','"+salle+"','"+codeModule+"','"+duree+"');";
             try { 
                 gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(requete);
