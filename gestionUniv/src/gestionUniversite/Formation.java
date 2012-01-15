@@ -22,10 +22,12 @@ public class Formation extends GroupeEtudiants {
     }
     
     public void addModule(Module module){
+        module.setSuccessor(this);
         this.modules.add(module);
     }
     
     public void addEtudiant(Etudiant etudiant){
+        etudiant.setSuccessor(this);
         this.etudiants.add(etudiant);
     }
 
@@ -76,5 +78,12 @@ public class Formation extends GroupeEtudiants {
     public void setSalleTD(Salle salleTD) {
         this.salleTD = salleTD;
     }
+
+    @Override
+    public String toString() {
+        return "Formation{" + "modules=" + modules + ", etudiants=" + etudiants.size() + ", nom=" + nom + ", code=" + code + ", salleCM=" + salleCM + ", salleTD=" + salleTD + '}';
+    }
+    
+    
     
 }

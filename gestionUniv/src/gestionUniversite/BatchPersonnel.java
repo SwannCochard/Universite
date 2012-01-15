@@ -74,9 +74,6 @@ public class BatchPersonnel {
                     case 9 :
                         afficherSeDeconnecter();
                         break;
-                    case 10 :
-                        afficherEDT();
-                        break;
                     default : 
                         afficherChoixIncorrect();
                         break;
@@ -337,33 +334,5 @@ public class BatchPersonnel {
         }
         System.out.println("Etudiant inscrit ! ");
         this.afficherMenuPersonnel();
-    }
-
-    private void afficherEDT() {
-        Date dateDebut = null;
-        Date dateFin = null;
-        
-        System.out.println("Entrez la date de début d'affichage de l'emploi du temps");
-        dateDebut = this.calculerDate();
-        
-        System.out.println("Entrez la date de fin d'affichage de l'emploi du temps");
-        dateFin = this.calculerDate();
-        
-        
-        ArrayList<Seance> seances = this.modeleApplication.consulterEDT(dateDebut, dateFin);
-        // travailler l'affichage
-    }
-    
-    private Date calculerDate(){
-        try{
-            System.out.println("Format : yyyy-mm-dd");
-            String dateALire;
-            dateALire = scan.nextLine();
-            
-            return java.sql.Date.valueOf( dateALire );
-        }catch(IllegalArgumentException e){
-            System.out.println("Erreur dans le format de la date");
-            return calculerDate();
-        }
     }
 }

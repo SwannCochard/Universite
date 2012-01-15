@@ -38,11 +38,13 @@ class ModeleApplication {
             String nom = "";
             String prenom = "";
             String type = "";
+            String log = "";
             while(res.next()) {
                 i++;
                 nom = res.getString("nom");
                 prenom = res.getString("prenom");
                 type = res.getString("type");
+                log = res.getString("login");
             }
             if (i != 1) {
                 System.out.println("Personne n'a été trouvé de ce nom");
@@ -51,7 +53,7 @@ class ModeleApplication {
             else {
                 connected = true;
                 if (type.equals("Etudiant")) {
-                    current = new Etudiant(login,mdp,nom,prenom, this.universite);
+                    current = universite.getEtudiant(log);
                 }
                 if (type.equals("Professeur")) {
                     current = new Professeur(login,mdp,nom,prenom, this.universite);
@@ -115,13 +117,6 @@ class ModeleApplication {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    public ArrayList<Seance> consulterEDT(Date dateDebut, Date dateFin) {
-        System.out.println("Debut : " + dateDebut);
-        System.out.println("Fin : " + dateFin);
-        return null;
-        //throw new UnsupportedOperationException("Not yet implemented");
-    }
-
     private void rapatrierDonnees() {
 //        this.lesFormations = new ArrayList<Formation>();
 //        this.lesPersonnels = new ArrayList<Personnel>();
@@ -129,12 +124,14 @@ class ModeleApplication {
 //        this.lesSalles = new ArrayList<Salle>();
 //        this.lesSeances = new ArrayList<Seance>();
         this.rapatrierSalles();
+        this.rapatrierFormations();
         this.rapatrierProfesseurs();
         this.rapatrierPersonnels();
         this.rapatrierEtudiants();
-        this.rapatrierFormations();
-        this.rapatrierSeances();
+        this.rapatrierSeances();  
+        universite.afficherLesEtudiants();
         
+        //universite.afficherLesFormations();
     }
 
     private void rapatrierFormations() {
@@ -148,11 +145,14 @@ class ModeleApplication {
                 String code = res.getString("code");
                 String nom = res.getString("nom");
                 
-                //-----------------------------------------/!\----------------------------
-                //Aller chercher la salle dans l'AL de salles de l'université récedement recnstruite
-                Formation formation = new Formation(nom, code, null, null);
-                formations.add(formation);
+                String nomSalleCM = res.getString("nomSalleCM");
+                String nomSalleTD = res.getString("nomSalleTD");
                 
+                Salle salleCM = universite.getSalle(nomSalleCM);
+                Salle salleTD = universite.getSalle(nomSalleTD);
+                
+                Formation formation = new Formation(nom, code, salleCM, salleTD);
+                formations.add(formation);        
             }
 
             //res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
@@ -219,11 +219,52 @@ class ModeleApplication {
     }
 
     private void rapatrierSalles() {
-        System.out.println("Salles non rapatriées");
+        ArrayList<Salle> salles = new ArrayList<Salle>();
+        String req = "";
+        req = "select * from Salle";
+ 
+        ResultSet res;
+        try {
+            res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
+            while (res.next()) {
+                String nom = res.getString("nom");
+                int capacite = res.getInt("capacite");
+                Salle p = new Salle(nom, capacite);
+                salles.add(p);
+            }
+            //res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        this.universite.setLesSalles(salles);
     }
 
     private void rapatrierSeances() {
-        System.out.println("Seances non rapatriées");
+        ArrayList<Seance> seances = new ArrayList<Seance>();
+        String req = "";
+        req = "select * from Seance";
+
+        ResultSet res;
+        try {
+            res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
+            while (res.next()) {
+                String type = res.getString("type");
+                Date date = res.getDate("date");
+                int heure = res.getInt("heure");
+                int duree = res.getInt("duree");
+                String nom = res.getString("nomSalle");
+                String codeModule = res.getString("codeModule");
+                
+                Salle salle = universite.getSalle(nom);
+                
+                Seance e = new Seance(type, codeModule, date, heure, duree, salle);
+                seances.add(e);
+            }
+            //res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        this.universite.setLesSeances(seances);
     }
 
     private void rapatrierEtudiants() {
@@ -241,6 +282,10 @@ class ModeleApplication {
                 String prenom = res.getString("prenom");
                 Etudiant e = new Etudiant(login, mdp, nom, prenom,universite);
                 etudiants.add(e);
+                
+                String codeFormation = res.getString("codeFormation");
+                Formation f = universite.getFormation(codeFormation);
+                f.addEtudiant(e);
             }
             //res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
         } catch (SQLException ex) {
@@ -313,5 +358,43 @@ class ModeleApplication {
                 result = false;
         }  
         return result;
+    }
+    
+    
+    // FONCTIONS GAEL
+    public ArrayList<Seance> consulterEDTProfesseur(Date dateDebut, Date dateFin, Professeur prof) {
+        ArrayList<Seance> seances = this.universite.getSeances(dateDebut, dateFin);
+        ArrayList<Module> modules = this.universite.getModulesParProfesseur(prof);
+        
+        ArrayList<Seance> seancesValides = new ArrayList<Seance>();
+                
+        for(Seance s : seances){
+            for(Module m : modules){
+                if(m.getCode().equals(s.getCodeModule())){
+                    seancesValides.add(s);
+                }
+            }
+        }
+        
+        return seancesValides;
+    }
+    
+    public ArrayList<Seance> consulterEDTEtudiant(Date dateDebut, Date dateFin, Etudiant etud) {
+        ArrayList<Seance> seances = this.universite.getSeances(dateDebut, dateFin);
+        Formation f = (Formation) etud.getSuccessor();
+        f.getCode();
+        ArrayList<Module> modules = f.getModules();
+        
+        ArrayList<Seance> seancesValides = new ArrayList<Seance>();
+                
+        for(Seance s : seances){
+            for(Module m : modules){
+                if(m.getCode().equals(s.getCodeModule())){
+                    seancesValides.add(s);
+                }
+            }
+        }
+        
+        return seancesValides;
     }
 }

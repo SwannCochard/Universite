@@ -1,4 +1,4 @@
-    /*
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -9,20 +9,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
- * @author Maxime
+ * @author gaelvarlet
  */
-public class BatchProfesseur {
+public class BatchEtudiant {
     private Scanner scan;
     private ModeleApplication modeleApplication;
     private Universite universite;
-
-
-    public BatchProfesseur(Scanner scan, ModeleApplication modeleApplication, Universite universite) {
+    
+    public BatchEtudiant(Scanner scan, ModeleApplication modeleApplication, Universite universite) {
         this.scan = scan;
         this.modeleApplication = modeleApplication;
         this.universite = universite;
@@ -32,14 +29,12 @@ public class BatchProfesseur {
         scan = scan.reset();
         afficherMenuPersonnel();
     }
-
+    
     private void afficherMenuPersonnel() {
         try {
-        
             System.out.println(" =======================================================");
             System.out.println("Bienvenue dans votre espace personnel. Vous pouvez :");
-            System.out.println("1. Fixer un coefficient");
-            System.out.println("2. Afficher Emploi du temps");
+            System.out.println("1. Afficher Emploi du temps");
             System.out.println("8. Quitter");
             System.out.println(" =======================================================");
             System.out.println("Quel est votre choix ? (tapez le chiffre correspondant)");
@@ -49,9 +44,6 @@ public class BatchProfesseur {
             scan.nextLine();
             switch(choix){
                     case 1 : 
-                        afficherFixerCoefficient();
-                        break;
-                    case 2 : 
                         afficherEDT();
                         break;
                     case 8 : 
@@ -72,63 +64,6 @@ public class BatchProfesseur {
         System.out.println("Le choix que vous avez fait ne correpond pas à une option valide. Veuillez recommencer.");
         this.afficherMenuPersonnel();
     }
-
-    private void afficherFixerCoefficient() {
-        System.out.println("Fixer un coefficient.");
-        System.out.println("Liste de vos modules :");
-        Professeur professeur = (Professeur) this.modeleApplication.getCurrent();
-        ArrayList<Module> modules = this.universite.getModulesParProfesseur(professeur);
-        
-        if (modules.isEmpty()) {
-            System.out.println("Vous n'avez aucun module");
-            try {
-                Thread.currentThread().sleep(1000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(BatchProfesseur.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            this.afficherMenuPersonnel();
-        }
-        
-        for (int i = 0; i< modules.size(); i++) {
-            System.out.println(i+1+"- "+modules.get(i).getCode());
-        }
-        System.out.println("Pour quel module souhaitez vous fixer un coefficient ?");
-        int indice = scan.nextInt();
-        if (indice < 1 || indice > modules.size()+1) {
-            System.out.println("Cet indice n'est pas bon. Retour au choix de module.");
-            this.afficherFixerCoefficient();
-        }
-        System.out.println("Liste de vos modules : ");
-        System.out.println("1- Coefficient du module");
-        System.out.println("2- Coefficient du CM");
-        System.out.println("3- Coefficient du TD");
-        System.out.println("4- Coefficient du TP");
-        System.out.println("Quel modules souhaitez vous modifier ?");
-        // On recupere le type qu'on souhaite modifier
-        int type = scan.nextInt();
-        if (type < 1 || indice > 4) {
-            System.out.println("Cet indice n'est pas bon. Retour au choix de module.");
-            this.afficherFixerCoefficient();
-        }
-        // On recupere le coefficient a ajouter
-        System.out.println("Quel est le coefficient ?");
-        int coefficient = scan.nextInt();
-        if (coefficient < 0) {
-            System.out.println("Cet indice n'est pas bon. Retour au choix de module.");
-            this.afficherFixerCoefficient();
-        }
-        Boolean result = this.modeleApplication.setCoefficient(modules.get(indice-1), coefficient, type);
-        if (!result) {
-            System.out.println("Une erreur est survenue. Retour au choix de module.");
-            this.afficherFixerCoefficient();
-        }
-//        System.out.println("Coefficients du module : ");
-//        System.out.println("Module : "+modules.get(indice-1).getCoefModule());
-//        System.out.println("CM : "+modules.get(indice-1).getCoefCM());
-//        System.out.println("TD : "+modules.get(indice-1).getCoefTD());
-//        System.out.println("TP : "+modules.get(indice-1).getCoefTP());
-        this.afficherMenuPersonnel();    
-    }
     
     private void afficherEDT() {
         Date dateDebut = null;
@@ -141,7 +76,7 @@ public class BatchProfesseur {
         dateFin = this.calculerDate();
         
         
-        ArrayList<Seance> seances = this.modeleApplication.consulterEDTProfesseur(dateDebut, dateFin, (Professeur) this.modeleApplication.getCurrent());
+        ArrayList<Seance> seances = this.modeleApplication.consulterEDTEtudiant(dateDebut, dateFin, (Etudiant) this.modeleApplication.getCurrent());
         
         System.out.println("\n==============================");
         
@@ -149,9 +84,9 @@ public class BatchProfesseur {
         if(seances != null & seances.size() > 0){
             for(Seance s : seances){
                 SimpleDateFormat formatterJour = new SimpleDateFormat ("E");
-                String jour = formatterJour.format(dateDebut);
+                String jour = formatterJour.format(s.getDate());
                 SimpleDateFormat formatterDate = new SimpleDateFormat ("dd.MM.yyyy");
-                String date = formatterDate.format(dateDebut);
+                String date = formatterDate.format(s.getDate());
                 if(!dayOfWeek.equals(jour)){
                     System.out.println("" + jour + " " + date);
                     dayOfWeek = jour;
@@ -181,5 +116,4 @@ public class BatchProfesseur {
             return calculerDate();
         }
     }
-    
 }

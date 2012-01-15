@@ -15,12 +15,13 @@ public class Batch {
     private ModeleApplication modeleApplication;
     private Scanner scan;
     private Universite universite;
+    
     public Batch() {
         this.scan = new Scanner(System.in);
         this.modeleApplication = new ModeleApplication();
         this.universite = new Universite("UHP",this.modeleApplication);
         this.modeleApplication.setUniversite(universite);
-        Collections.sort(this.universite.getLesPersonnes());
+        //Collections.sort(this.universite.getLesPersonnes());
     }
     
     public void afficherMenuPrincipal() {
@@ -43,11 +44,10 @@ public class Batch {
             igPersonnel.afficherMenuPrincipal();
         }
         if(user instanceof Etudiant) {
-            //BatchPersonnel igPersonnel = new BatchPersonnel();
-            //igPersonnel.afficherMenuPrincipal();
+            BatchEtudiant igPersonnel = new BatchEtudiant(scan, modeleApplication, universite);
+            igPersonnel.afficherMenuPrincipal();
         }
-        if(user instanceof Professeur) {
-            
+        if(user instanceof Professeur) { 
             BatchProfesseur igProfesseur = new BatchProfesseur(scan, modeleApplication, universite);
             igProfesseur.afficherMenuPrincipal();
         }

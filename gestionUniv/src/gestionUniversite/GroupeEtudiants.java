@@ -4,8 +4,9 @@ package gestionUniversite;
  *
  * @author gaelvarlet
  */
-public class GroupeEtudiants implements ComposanteFac{
-
+public abstract class GroupeEtudiants implements ComposanteFac{
+    private ComposanteFac successor;
+    
     @Override
     public double getMoyenne() {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -15,5 +16,12 @@ public class GroupeEtudiants implements ComposanteFac{
     public int getNbEtudiants() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
+    public ComposanteFac getSuccessor() {
+        return successor;
+    }
+
+    public void setSuccessor(ComposanteFac successor) {
+        this.successor = successor;
+    }
 }

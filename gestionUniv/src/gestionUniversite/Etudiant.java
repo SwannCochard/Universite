@@ -9,6 +9,7 @@ import java.util.ArrayList;
  */
 public class Etudiant extends Personne implements ComposanteFac {
     private Universite universite;
+    private ComposanteFac successor;
     
     public Etudiant(String motDePasse, String nom, String prenom, Universite universite) {
         super(motDePasse, nom, prenom, universite);
@@ -17,14 +18,19 @@ public class Etudiant extends Personne implements ComposanteFac {
     public Etudiant(String login, String motDePasse, String nom, String prenom, Universite universite) {
         super(login, motDePasse, nom, prenom, universite);
     }
-    
-    public void consulterNotes() {
-        throw new UnsupportedOperationException("Not supported yet.");
+
+    public ComposanteFac getSuccessor() {
+        return successor;
+    }
+
+    public void setSuccessor(ComposanteFac successor) {
+        this.successor = successor;
     }
     
     public ArrayList<Seance> consulterEDT(Date dateDebut, Date dateFin) {
         return null;
     }
+    
 
     @Override
     public double getMoyenne() {
@@ -33,8 +39,9 @@ public class Etudiant extends Personne implements ComposanteFac {
 
     @Override
     public int getNbEtudiants() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return 1;
     }
+   
 
     @Override
     public int compareTo(Object t) {
@@ -65,4 +72,5 @@ public class Etudiant extends Personne implements ComposanteFac {
             //return premPartLoginThis.compareTo(premPartLoginP);
         }
     }
+    
 }

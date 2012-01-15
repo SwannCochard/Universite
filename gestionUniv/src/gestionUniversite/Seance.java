@@ -1,5 +1,6 @@
 package gestionUniversite;
 
+import java.sql.Date;
 import java.util.Enumeration;
 
 /**
@@ -7,12 +8,21 @@ import java.util.Enumeration;
  * @author gaelvarlet
  */
 public class Seance {
-    private Enumeration type;
+    private String type;
     private String codeModule;
-    private String jour;
+    private Date date;
     private int heure;
     private int duree;
     private Salle salle;
+
+    public Seance(String type, String codeModule, Date date, int heure, int duree, Salle salle) {
+        this.type = type;
+        this.codeModule = codeModule;
+        this.date = date;
+        this.heure = heure;
+        this.duree = duree;
+        this.salle = salle;
+    }
 
     public String getCodeModule() {
         return codeModule;
@@ -38,12 +48,12 @@ public class Seance {
         this.heure = heure;
     }
 
-    public String getJour() {
-        return jour;
+    public Date getDate() {
+        return date;
     }
 
-    public void setJour(String jour) {
-        this.jour = jour;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public Salle getSalle() {
@@ -54,11 +64,11 @@ public class Seance {
         this.salle = salle;
     }
 
-    public Enumeration getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(Enumeration type) {
+    public void setType(String type) {
         this.type = type;
     }
 }

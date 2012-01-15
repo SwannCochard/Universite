@@ -1,5 +1,6 @@
 package gestionUniversite;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -164,6 +165,7 @@ public class Universite extends GroupeEtudiants {
         while(i < this.lesFormations.size() && f == null){
             if(this.lesFormations.get(i).getCode().equals(code))
                 f = this.lesFormations.get(i);
+            i++;
         }
         
         return f;
@@ -321,5 +323,47 @@ public class Universite extends GroupeEtudiants {
         }
         System.out.println("code : "+code);
         return code;
+    }
+
+    public Salle getSalle(String nom) {
+        int i = 0;
+        Salle s = null;
+        while(s == null & i<this.lesSalles.size()){
+            Salle salle = this.lesSalles.get(i);
+            if(salle.getNom().equals(nom)){
+                s = salle;
+            }
+            i++;
+        }
+        return s;
+    }
+    
+    public ArrayList<Seance> getSeances(Date dateDebut, Date dateFin) {
+        ArrayList<Seance> seances = new ArrayList<Seance>();
+        for(Seance s : lesSeances){
+            if((s.getDate().after(dateDebut) || s.getDate().equals(dateDebut)) & (s.getDate().before(dateFin) || s.getDate().equals(dateFin))){
+                seances.add(s);
+            }
+        }
+        return seances;
+    }
+
+    void afficherLesEtudiants() {
+        for(Etudiant f : lesEtudiants){
+            System.out.println(((Formation)f.getSuccessor()).getNom());
+        }
+    }
+
+    public Etudiant getEtudiant(String log) {
+        int i = 0;
+        Etudiant e = null;
+        while(e == null & i<this.lesEtudiants.size()){
+            Etudiant etudiant = this.lesEtudiants.get(i);
+            if(etudiant.getLogin().equals(log)){
+                e = etudiant;
+            }
+            i++;
+        }
+        return e;
     }
 }
