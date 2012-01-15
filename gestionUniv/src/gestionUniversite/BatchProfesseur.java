@@ -38,7 +38,7 @@ public class BatchProfesseur {
             System.out.println("1. Fixer un coefficient");
             System.out.println("2. Afficher Emploi du temps");
             System.out.println("3. Ajouter une séance");
-            System.out.println("4. Réserver une salle");
+            System.out.println("4. Réserver/Modifier une salle");
             System.out.println("5. Saisir une/des notes");
             System.out.println("8. Quitter");
             System.out.println(" =======================================================");
@@ -166,7 +166,7 @@ public class BatchProfesseur {
                 }
                 
                 System.out.println("\t" + s.getHeure() + "h00 " + (s.getHeure() + s.getDuree()) + "h00");
-                System.out.print("\t  |" + s.getCodeModule() + ", Salle : ");
+                System.out.print("\t  |" + universite.getModule(s.getCodeModule()).getNom() + "(" + s.getType() + ")" + ", Salle : ");
                 if(s.getSalle() == null){
                     System.out.println("null");
                 }else{
@@ -201,7 +201,7 @@ public class BatchProfesseur {
         if(type.equals("CM") || type.equals("TD") || type.equals("TP")){
             return type;
         }else{
-            System.out.println("Erreur dans le type de la séance (CM, TD ou TD)");
+            System.out.println("Erreur dans le type de la séance (CM, TD ou TP)");
             return calculerTypeCours();
         }
     }
@@ -231,7 +231,7 @@ public class BatchProfesseur {
         }
         
         // Type
-        System.out.println("Type de la séance (CM, TD ou TD)");
+        System.out.println("Type de la séance (CM, TD ou TP)");
         String typeCours = this.calculerTypeCours();
         
         // Date

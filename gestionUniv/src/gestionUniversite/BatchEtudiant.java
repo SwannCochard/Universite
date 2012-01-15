@@ -99,7 +99,7 @@ public class BatchEtudiant {
                 }
                 
                 System.out.println("\t" + s.getHeure() + "h00 " + (s.getHeure() + s.getDuree()) + "h00");
-                System.out.println("\t  |" + s.getCodeModule() + ", Salle : " + s.getSalle().getNom());
+                System.out.print("\t  |" + universite.getModule(s.getCodeModule()).getNom() + "(" + s.getType() + ")" + ", Salle : ");
 
             }
         }else{

@@ -26,11 +26,6 @@ public class Etudiant extends Personne implements ComposanteFac {
         this.successor = successor;
     }
     
-    public ArrayList<Seance> consulterEDT(Date dateDebut, Date dateFin) {
-        return null;
-    }
-    
-
     @Override
     public double getMoyenne() {
         ArrayList<Resultat> result = new ArrayList<Resultat>();
