@@ -171,7 +171,7 @@ public class Universite extends GroupeEtudiants {
         return f;
     }
 
-    Professeur getProfesseur(String loginResponsable) {
+    public Professeur getProfesseur(String loginResponsable) {
         boolean trouve = false;
         int i = 0;
         Professeur p = null;
@@ -186,6 +186,21 @@ public class Universite extends GroupeEtudiants {
         return p;
     }
     
+    public Personnel getPersonnel(String login) {
+        boolean trouve = false;
+        int i = 0;
+        Personnel p = null;
+        while (!trouve && i < this.lesPersonnels.size()) {
+            System.out.println("" + this.lesPersonnels.get(i).getLogin());
+            if (this.lesPersonnels.get(i).getLogin().equals(login)) {
+                p = this.lesPersonnels.get(i);
+                trouve = true;        
+            }
+            i++;
+        }
+        return p;
+    }
+
     public void affichageTestContenu() {
         System.out.println("Etudiants : ");
         for(Etudiant e : this.lesEtudiants) {
@@ -366,5 +381,9 @@ public class Universite extends GroupeEtudiants {
             i++;
         }
         return e;
+    }
+
+    public void ajouterSeance(Seance seance) {
+        this.lesSeances.add(seance);
     }
 }

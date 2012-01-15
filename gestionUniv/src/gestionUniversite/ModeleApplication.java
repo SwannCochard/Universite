@@ -56,10 +56,10 @@ class ModeleApplication {
                     current = universite.getEtudiant(log);
                 }
                 if (type.equals("Professeur")) {
-                    current = new Professeur(login,mdp,nom,prenom, this.universite);
+                    current = universite.getProfesseur(log);
                 }
                 if (type.equals("Personnel")) {
-                    current = new Personnel(login,mdp,nom,prenom,this.universite);
+                    current = universite.getPersonnel(log);
                 }
             }
         } catch (SQLException ex) {
@@ -167,10 +167,11 @@ class ModeleApplication {
                 }
             }
         }
+        
+        this.universite.setLesFormations(formations);
         for (Formation formation : formations) {
                 formation.setModules(this.reconstruireModules(formation.getCode()));
             }
-        this.universite.setLesFormations(formations);
     }
 
     private void rapatrierPersonnels() {
@@ -312,6 +313,9 @@ class ModeleApplication {
                 Professeur p = this.universite.getProfesseur(loginResponsable);
                 Module m = new Module(nom,code,coeffTD,coeffTP,coeffCM,coeffModule,p);
                 modules.add(m);
+                
+                Formation formation = universite.getFormation(codeFormation);
+                formation.addModule(m);
             }
         } catch (SQLException ex) {
             Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
@@ -397,5 +401,13 @@ class ModeleApplication {
         return seancesValides;
     }
     
-    
+    public void ajouterSeance(String type, Date date, int heure, String nomSalle, String codeModule, int duree){
+        Salle s = universite.getSalle(nomSalle);
+        Seance seance = new Seance(type, codeModule, date, heure, duree, s);
+        universite.ajouterSeance(seance);
+    }
+
+    public void reserverSalle(Seance seance, Formation formation) {
+        System.out.println("Reserver une salle !");
+    }
 }
