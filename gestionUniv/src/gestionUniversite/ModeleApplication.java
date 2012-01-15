@@ -118,11 +118,6 @@ class ModeleApplication {
     }
 
     private void rapatrierDonnees() {
-//        this.lesFormations = new ArrayList<Formation>();
-//        this.lesPersonnels = new ArrayList<Personnel>();
-//        this.lesProfesseurs = new ArrayList<Professeur>();
-//        this.lesSalles = new ArrayList<Salle>();
-//        this.lesSeances = new ArrayList<Seance>();
         this.rapatrierSalles();
         this.rapatrierProfesseurs();
         this.rapatrierFormations();
