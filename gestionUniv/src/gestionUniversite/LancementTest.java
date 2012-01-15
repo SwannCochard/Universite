@@ -7,7 +7,7 @@ package gestionUniversite;
 public class LancementTest {
     
     public static void main(String[] args) {
-        Batch biatch = new Batch();
-        biatch.afficherMenuPrincipal();
+        Batch batch = new Batch();
+        batch.afficherMenuPrincipal();
     }
 }
