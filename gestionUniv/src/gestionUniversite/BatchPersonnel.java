@@ -108,12 +108,7 @@ public class BatchPersonnel {
         int type = 0;
         System.out.print("type ? ( 1 : etudiant, 2 : professeur, 3 : personnel)");
         type = scan.nextInt();
-//        while (type != 1 || type !=2 || type !=3) {
-//            System.out.println("Type invalide."+type);
-//            System.out.print("type ? ( 1 : etudiant, 2 : professeur, 3 : personnel)");
-//            type = scan.nextInt();
-//            scan.next();
-//        }
+
         String typePersonne  ="";
         Formation formation = null;
         switch(type){
@@ -142,7 +137,6 @@ public class BatchPersonnel {
                 break;
         }
         scan.nextLine();
-        System.out.println("Type : "+typePersonne);
         if (typePersonne.equals("etudiant")) {
            this.modeleApplication.ajouterEtudiant(nom, prenom, mdp, formation);
         }
@@ -261,6 +255,29 @@ public class BatchPersonnel {
     }
 
     private void afficherCalculerMoyennes() {
+        System.out.println("Calcul de moyenne.");
+        System.out.println("1- Par module");
+        System.out.println("2- Par formation");
+        int indice = this.scan.nextInt();
+        while ((indice !=1) && (indice != 2)) {
+            System.out.println("Indice incorrect.");
+            indice = this.scan.nextInt();
+        }
+        switch (indice) {
+            case (1) :
+                for (Formation f : this.universite.getLesFormations()) {
+                    System.out.println(f.getNom());
+                    for (Module m : f.getModules()) {
+                        System.out.println("\t"+m.getNom()+" ("+m.getCode()+") : "+m.getMoyenne());
+                    }
+                }
+                break;
+            case (2) :
+                for (Formation f : this.universite.getLesFormations()) {
+                    System.out.println(f.getNom()+" -> "+f.getMoyenne());
+                }
+                break;    
+        }
         this.afficherMenuPersonnel();
     }
 
@@ -320,7 +337,6 @@ public class BatchPersonnel {
 
     private void afficherInscrireEtudiant() {
         System.out.println("Inscrire un étudiant à une formation");
-        //this.modeleApplication.afficherLesEtudiants();
         System.out.println("Login de l'étudiant : ");
         String login = scan.nextLine();
         while(login.isEmpty()) {

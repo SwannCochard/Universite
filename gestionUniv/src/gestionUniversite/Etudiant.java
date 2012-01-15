@@ -8,7 +8,6 @@ import java.util.ArrayList;
  * @author gaelvarlet
  */
 public class Etudiant extends Personne implements ComposanteFac {
-    private Universite universite;
     private ComposanteFac successor;
     
     public Etudiant(String motDePasse, String nom, String prenom, Universite universite) {
@@ -34,7 +33,29 @@ public class Etudiant extends Personne implements ComposanteFac {
 
     @Override
     public double getMoyenne() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        ArrayList<Resultat> result = new ArrayList<Resultat>();
+        for (Resultat r : this.universite.getLesResultats()) {
+            if (r.getEtudiant().getLogin().equals(this.login)){
+                result.add(r);
+            }
+        }
+        int coefficient = 0;
+        double moyenne = 0;
+        for (Resultat r : result) {
+            double cm = r.getNoteCM();
+            double td = r.getNoteTD();
+            double tp = r.getNoteTP();
+            
+            int coeffCM = r.getModule().getCoefCM();
+            int coeffTD = r.getModule().getCoefTD();
+            int coeffTP = r.getModule().getCoefTP();
+            double temp = (cm*coeffCM + td*coeffTD + tp*coeffTP) / (coeffCM+coeffTD+coeffTP);
+            
+            moyenne += (temp*r.getModule().getCoefModule());
+            coefficient += r.getModule().getCoefModule();
+        }
+        moyenne /= coefficient;
+        return moyenne;
     }
 
     @Override

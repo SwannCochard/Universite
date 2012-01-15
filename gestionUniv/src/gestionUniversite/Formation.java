@@ -80,6 +80,17 @@ public class Formation extends GroupeEtudiants {
     }
     
     @Override
+    public double getMoyenne() {
+        double res = 0;
+        int coefficient = 0;
+        for (Module m : this.getModules()) {
+            res += m.getMoyenne();
+            coefficient ++;
+        }
+        return res;
+    }
+    
+    @Override
     public int getNbEtudiants(){
         return etudiants.size();
     }

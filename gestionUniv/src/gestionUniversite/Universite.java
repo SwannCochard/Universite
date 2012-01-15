@@ -50,10 +50,8 @@ public class Universite extends GroupeEtudiants {
         String nomRes ="";
         for(Personne p : lesPersonnes) {
             String nomCourant = p.getLogin().substring(0, taille);
-            System.out.println("nom : "+nom+", nomcourant : "+nomCourant);
             if (nomCourant.equals(nom)) {
                 nomRes = p.getLogin();
-                System.out.println("NomRes : "+nomRes);
             }
         }
         return nomRes;
@@ -195,7 +193,6 @@ public class Universite extends GroupeEtudiants {
         int i = 0;
         Personnel p = null;
         while (!trouve && i < this.lesPersonnels.size()) {
-            System.out.println("" + this.lesPersonnels.get(i).getLogin());
             if (this.lesPersonnels.get(i).getLogin().equals(login)) {
                 p = this.lesPersonnels.get(i);
                 trouve = true;        
@@ -276,7 +273,6 @@ public class Universite extends GroupeEtudiants {
         this.lesEtudiants.add(etud);
         this.lesPersonnes.add(etud);
         Collections.sort(this.getLesPersonnes());
-        this.afficherPersonnes();
     }
     
     
@@ -286,7 +282,6 @@ public class Universite extends GroupeEtudiants {
         this.lesProfesseurs.add(prof);
         this.lesPersonnes.add(prof);
         Collections.sort(this.getLesPersonnes());
-        this.afficherPersonnes();
     }
 
     void ajouterPersonnel(String nom, String prenom, String mdp) {
@@ -294,7 +289,6 @@ public class Universite extends GroupeEtudiants {
         this.lesPersonnels.add(pers);
         this.lesPersonnes.add(pers);
         Collections.sort(this.getLesPersonnes());
-        this.afficherPersonnes();
     }
 
 
@@ -529,13 +523,6 @@ public class Universite extends GroupeEtudiants {
         return true;
     }
     
-    void afficherLesEtudiants() {
-        System.out.println("Etudiants connus : ");
-        for(Etudiant etudiant : lesEtudiants){
-            System.out.println("-- "+etudiant.getLogin());
-        }
-    }
-    
     public ArrayList<Resultat> getLesResultats() {
         return lesResultats;
     }
@@ -543,5 +530,18 @@ public class Universite extends GroupeEtudiants {
     public void setLesResultats(ArrayList<Resultat> lesResultats) {
         this.lesResultats = lesResultats;
     }
-
+    
+    public Resultat getResult(Etudiant e, Module m) {
+        Resultat res = null ;
+        for (Resultat resultat : this.getLesResultats()) {
+            String login = resultat.getEtudiant().getLogin();
+            boolean flag1 = login.equals(e.getLogin());
+            String code = resultat.getModule().getCode();
+            boolean flag2 = code.equals(m.getCode());
+            if (flag1 && flag2) {
+                res = resultat;
+            }
+        }
+        return res;
+    }
 }

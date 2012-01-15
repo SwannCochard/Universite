@@ -112,10 +112,6 @@ class ModeleApplication {
         return this.universite.modifierModule(codeModule, codeProfesseur, nomModule);
     }
 
-    void afficherLesEtudiants() {
-        this.universite.afficherLesEtudiants();
-    }
-
     boolean inscrireEtudiant(String login, String code) {
         return this.universite.inscrireEtudiant(login, code);
     }
@@ -167,6 +163,7 @@ class ModeleApplication {
         this.universite.setLesFormations(formations);
         for (Formation formation : formations) {
                 formation.setModules(this.reconstruireModules(formation.getCode()));
+                formation.setSuccessor(this.universite);
             }
     }
 
@@ -309,7 +306,10 @@ class ModeleApplication {
                 
                 Etudiant etudiant = this.universite.getEtudiant(login);
                 Module module = this.universite.getModule(codeModule);
+                
+                
                 Resultat resultat = new Resultat(etudiant, module);
+                
                 resultat.setNoteCM(noteCM);
                 resultat.setNoteTD(noteTD);
                 resultat.setNoteTP(noteTP);
@@ -559,7 +559,7 @@ class ModeleApplication {
         
         for (Resultat resultat : resultats) {
             String login = resultat.getEtudiant().getLogin();
-            String module = resultat.getModule().getNom();
+            String module = resultat.getModule().getCode();
             double noteCM = resultat.getNoteCM();
             double noteTD = resultat.getNoteTD();
             double noteTP = resultat.getNoteTP();

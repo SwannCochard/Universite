@@ -4,6 +4,8 @@
  */
 package gestionUniversite;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author gaelvarlet
@@ -84,4 +86,35 @@ public class Module extends GroupeEtudiants {
     public void setResponsable(Professeur responsable) {
         this.responsable = responsable;
     }
+    
+    @Override
+    public double getMoyenne() {
+        ArrayList<Resultat> result = new ArrayList<Resultat>();
+        Formation f = (Formation) this.getSuccessor();
+        Universite u = (Universite) f.getSuccessor();
+
+        for (Resultat r : u.getLesResultats()) {
+            if (r.getModule().getCode().equals(this.code)){
+                result.add(r);
+            }
+        }
+        int coefficient = 0;
+        double moyenne = 0;
+        for (Resultat r : result) {
+            double cm = r.getNoteCM();
+            double td = r.getNoteTD();
+            double tp = r.getNoteTP();
+            
+            int coeffCM = r.getModule().getCoefCM();
+            int coeffTD = r.getModule().getCoefTD();
+            int coeffTP = r.getModule().getCoefTP();
+            double temp = (cm*coeffCM + td*coeffTD + tp*coeffTP) / (coeffCM+coeffTD+coeffTP);
+            
+            moyenne += (temp*r.getModule().getCoefModule());
+            coefficient += r.getModule().getCoefModule();
+        }
+        moyenne /= coefficient;
+        return moyenne;
+    }
+
 }

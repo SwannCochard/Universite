@@ -133,11 +133,6 @@ public class BatchProfesseur {
             System.out.println("Une erreur est survenue. Retour au choix de module.");
             this.afficherFixerCoefficient();
         }
-//        System.out.println("Coefficients du module : ");
-//        System.out.println("Module : "+modules.get(indice-1).getCoefModule());
-//        System.out.println("CM : "+modules.get(indice-1).getCoefCM());
-//        System.out.println("TD : "+modules.get(indice-1).getCoefTD());
-//        System.out.println("TP : "+modules.get(indice-1).getCoefTP());
         this.afficherMenuPersonnel();    
     }
     
@@ -353,6 +348,11 @@ public class BatchProfesseur {
         for (int i = 0; i< modules.size(); i++) {
             System.out.println(i+1+"- "+modules.get(i).getCode());
         }
+        if (modules.size() == 0) {
+            System.out.println("Vous n'êtes responsable d'aucun module ... ");
+            this.afficherMenuPrincipal();
+        }
+        
         System.out.println("Pour quel module souhaitez vous fixer un coefficient ?");
         int indice = scan.nextInt();
         while ((indice <= 0) || (indice > modules.size())) {
@@ -361,7 +361,7 @@ public class BatchProfesseur {
         Module module = modules.get(indice-1);
         ArrayList<Etudiant> etudiants = ((Formation)module.getSuccessor()).getEtudiants();
         if (etudiants.size() == 0) {
-            System.out.println("Il n'y a pas d'etudiant pour cette formation");
+            System.out.println("Il n'y a pas d'etudiants pour cette formation");
             this.afficherMenuPrincipal();
         }
             
@@ -377,17 +377,36 @@ public class BatchProfesseur {
         Etudiant etudiant = etudiants.get(indice-1);
         System.out.println("Note de CM : ");
         double cm = scan.nextDouble();
+        while ((cm<0)||(cm>20)) {
+            System.out.println("Note non valide ... Veuillez recommencer.");
+            cm = scan.nextDouble();
+        }
         System.out.println("Note de TD : ");
         double td = scan.nextDouble();
+        while ((td<0)||(td>20)) {
+            System.out.println("Note non valide ... Veuillez recommencer.");
+            td = scan.nextDouble();
+        }
         System.out.println("Note de TP : ");
         double tp = scan.nextDouble();
+        while ((tp<0)||(tp>20)) {
+            System.out.println("Note non valide ... Veuillez recommencer.");
+            tp = scan.nextDouble();
+        }
+        Resultat result = this.universite.getResult(etudiant, module);
         
-        Resultat result = new Resultat(etudiant,module);
+        Boolean flag = false;
+        if (result == null) {
+            result = new Resultat(etudiant,module);
+            flag  = true;
+        }    
         result.setNoteCM(cm);
         result.setNoteTD(td);
         result.setNoteTP(tp);
         
-        this.universite.getLesResultats().add(result);
+        if (flag) {
+            this.universite.getLesResultats().add(result);
+        }      
         System.out.println("Notes enregistrées.");
         
         this.afficherMenuPrincipal();

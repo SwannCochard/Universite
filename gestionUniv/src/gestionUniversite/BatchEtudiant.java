@@ -35,6 +35,7 @@ public class BatchEtudiant {
             System.out.println(" =======================================================");
             System.out.println("Bienvenue dans votre espace personnel. Vous pouvez :");
             System.out.println("1. Afficher Emploi du temps");
+            System.out.println("2. Afficher Moyenne");
             System.out.println("8. Quitter");
             System.out.println(" =======================================================");
             System.out.println("Quel est votre choix ? (tapez le chiffre correspondant)");
@@ -123,6 +124,6 @@ public class BatchEtudiant {
     }
 
     private void consulterNotes() {
-        throw new UnsupportedOperationException("Not yet implemented");
+        System.out.println("Votre moyenne : "+((Etudiant)this.modeleApplication.getCurrent()).getMoyenne());
     }
 }
