@@ -18,6 +18,7 @@ class ModeleApplication {
     private Statement stmt = c.getStatement();
     private Personne current;
     private boolean connected = false;
+    private Formation currentFormation = null;
     
     public ModeleApplication() {
         current = null;
@@ -85,16 +86,18 @@ class ModeleApplication {
         return current;
     }
 
-    void ajouterFormation(String nom) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public boolean ajouterFormation(String nom, String nomSalleCM, String nomSalleTD) {
+        this.currentFormation = this.universite.ajouterFormation(nom, nomSalleCM, nomSalleTD);
+        return (this.currentFormation != null);
     }
 
     void afficherLesFormations() {
         this.universite.afficherFormations();
     }
 
-    boolean modifierFormation(String code, String nom) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    boolean modifierFormation(String code, String nom, String nomSalleCM, String nomSalleTD) {
+        this.currentFormation = this.universite.getFormation(code);
+        return this.universite.modifierFormation(code, nom, nomSalleCM, nomSalleTD);
     }
 
     void afficherLesModules() {
@@ -106,15 +109,15 @@ class ModeleApplication {
     }
 
     boolean modifierModule(String codeModule, String codeProfesseur, String nomModule) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return this.universite.modifierModule(codeModule, codeProfesseur, nomModule);
     }
 
     void afficherLesEtudiants() {
-        throw new UnsupportedOperationException("Not yet implemented");
+        this.universite.afficherLesEtudiants();
     }
 
     boolean inscrireEtudiant(String login, String code) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return this.universite.inscrireEtudiant(login, code);
     }
 
     private void rapatrierDonnees() {
@@ -124,8 +127,7 @@ class ModeleApplication {
         this.rapatrierPersonnels();
         this.rapatrierEtudiants();
         this.rapatrierSeances();
-        
-        //universite.afficherLesFormations();
+        this.rapatrierResultats();
     }
 
     private void rapatrierFormations() {
@@ -290,6 +292,38 @@ class ModeleApplication {
 
     }
     
+    private void rapatrierResultats() {
+        ArrayList<Resultat> resultats = new ArrayList<Resultat>();
+        String req = "";
+        req = "select * from Participe";
+
+        ResultSet res;
+        try {
+            res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
+            while (res.next()) {
+                String login = res.getString("login");
+                String codeModule = res.getString("codeModule");
+                Double noteCM = res.getDouble("noteCM");
+                Double noteTD = res.getDouble("noteTD");
+                Double noteTP = res.getDouble("noteTP");
+                
+                Etudiant etudiant = this.universite.getEtudiant(login);
+                Module module = this.universite.getModule(codeModule);
+                Resultat resultat = new Resultat(etudiant, module);
+                resultat.setNoteCM(noteCM);
+                resultat.setNoteTD(noteTD);
+                resultat.setNoteTP(noteTP);
+                
+                resultats.add(resultat);
+            }
+            //res = gestionUniversite.Connexion.getInstance().getStatement().executeQuery(req);
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        this.universite.setLesResultats(resultats);
+
+    }
+    
     public ArrayList<Module> reconstruireModules(String codeFormation) {
         ArrayList<Module> modules = new ArrayList<Module>();
         String req = "select * from Module where codeFormation like '"+codeFormation+"'";
@@ -327,10 +361,6 @@ class ModeleApplication {
         
     }
 
-    public void commit() {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
     // FONCTIONS MAXIME
     public boolean setCoefficient(Module module, int coefficient, int type) {
         boolean result;
@@ -357,6 +387,190 @@ class ModeleApplication {
         return result;
     }
     
+    public void commit() {
+        this.viderBase();
+        this.exporterSalle();
+        this.exporterPersonnel();
+        this.exporterProfesseur();
+        this.exporterFormation();
+        this.exporterEtudiant();
+        this.exporterSeance();
+        this.exporterResultats();
+    }
+    
+    public void viderBase() {
+        String etudiant = "delete from Utilisateur where type = 'Etudiant';";
+        String personnel = "delete from utilisateur where type = 'Personnel';";
+        String formation = "delete from Formation;";        
+        String salle = "delete from Salle;";
+        String professeur = "delete from Utilisateur where type = 'Professeur';";
+        String module = "delete from Module;";
+        String seance = "delete from Seance;";
+        String resultats = "delete from Participe;";
+        
+        try { 
+            gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(resultats);
+            gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(etudiant);
+            gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(personnel);      
+            gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(seance);
+            gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(module);
+            gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(formation);
+            
+            
+            gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(salle);
+            gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(professeur);
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+    }
+    
+    public void exporterEtudiant() {
+        ArrayList<Etudiant> etudiants = this.universite.getLesEtudiants();
+        
+        for (Etudiant etudiant : etudiants) {
+            String login = etudiant.getLogin();
+            String mdp = etudiant.getMdp();
+            String nom = etudiant.getNom();
+            String prenom = etudiant.getPrenom();
+            String nomUniversite = this.universite.getNom();
+            String formation = ((Formation)etudiant.getSuccessor()).getCode();
+                        
+            String requete = "insert into Utilisateur value ('"+login+"','"+mdp+"','"+nom+"','"+prenom+"','Etudiant','"+nomUniversite+"','"+formation+"');";
+            try { 
+                gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(requete);
+            } catch (SQLException ex) {
+                Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }       
+    }
+    
+    public void exporterPersonnel() {
+        ArrayList<Personnel> personnels = this.universite.getLesPersonnels();
+        
+        for (Personnel personnel : personnels) {
+            String login = personnel.getLogin();
+            String mdp = personnel.getMdp();
+            String nom = personnel.getNom();
+            String prenom = personnel.getPrenom();
+            String nomUniversite = this.universite.getNom();
+            
+            
+            String requete = "insert into Utilisateur value ('"+login+"','"+mdp+"','"+nom+"','"+prenom+"','Personnel','"+nomUniversite+"',NULL);";
+            try { 
+                gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(requete);
+            } catch (SQLException ex) {
+                Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }      
+    }
+    
+    public void exporterFormation() {
+        ArrayList<Formation> formations = this.universite.getLesFormations();
+        
+        for (Formation formation : formations) {
+            String nom = formation.getNom();
+            String code = formation.getCode();
+            String nomUniversite = this.universite.getNom();
+            String salleCM = formation.getSalleCM().getNom();
+
+            String salleTD = formation.getSalleTD().getNom();
+              
+            String requete = "insert into Formation value ('"+nom+"','"+code+"','"+nomUniversite+"','"+salleCM+"','"+salleTD+"');";
+            try { 
+                gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(requete);
+                for (Module module : formation.getModules()) {
+                   String nom2 = module.getNom();
+                   String code2 = module.getCode();
+                   int coeffTD = module.getCoefTD();
+                   int coeffTP = module.getCoefTP();
+                   int coeffCM = module.getCoefCM();
+                   int coeffModule = module.getCoefModule();
+                   String responsable = module.getResponsable().getLogin();
+                   
+                   String requete2 = "insert into Module value ('"+nom2+"','"+code2+"','"+coeffTP+"','"+coeffTD+"','"+coeffCM+"','"+coeffModule+"','"+responsable+"','"+code+"');";
+                   gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(requete2);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }      
+    }
+    
+    public void exporterSalle() {
+        ArrayList<Salle> salles = this.universite.getLesSalles();
+        
+        for (Salle salle : salles) {
+            String nom = salle.getNom();
+            int capacite = salle.getCapacite();
+              
+            String requete = "insert into Salle value ('"+nom+"','"+capacite+"');";
+            try { 
+                gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(requete);
+            } catch (SQLException ex) {
+                Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }      
+    }
+    
+    public void exporterProfesseur() {
+         ArrayList<Professeur> professeurs = this.universite.getLesProfesseurs();
+        
+        for (Professeur professeur : professeurs) {
+            String login = professeur.getLogin();
+            String mdp = professeur.getMdp();
+            String nom = professeur.getNom();
+            String prenom = professeur.getPrenom();
+            String nomUniversite = this.universite.getNom();
+            
+            
+            String requete = "insert into Utilisateur value ('"+login+"','"+mdp+"','"+nom+"','"+prenom+"','Professeur','"+nomUniversite+"',NULL);";
+            try { 
+                gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(requete);
+            } catch (SQLException ex) {
+                Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }    
+    }
+    
+    public void exporterSeance() {
+        ArrayList<Seance> seances = this.universite.getLesSeances();
+        
+        for (Seance seance : seances) {
+            String type = seance.getType();
+            String codeModule = seance.getCodeModule();
+            Date date = seance.getDate();
+            int heure = seance.getHeure();
+            int duree = seance.getDuree();
+            String salle = seance.getSalle().getNom();
+              
+            String requete = "insert into Seance value ('"+type+"','"+date+"','"+heure+"','"+salle+"','"+codeModule+"','"+duree+"');";
+            try { 
+                gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(requete);
+            } catch (SQLException ex) {
+                Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }      
+    }
+    
+    public void exporterResultats() {
+        ArrayList<Resultat> resultats = this.universite.getLesResultats();
+        
+        for (Resultat resultat : resultats) {
+            String login = resultat.getEtudiant().getLogin();
+            String module = resultat.getModule().getNom();
+            double noteCM = resultat.getNoteCM();
+            double noteTD = resultat.getNoteTD();
+            double noteTP = resultat.getNoteTP();
+              
+            String requete = "insert into Participe value ('"+login+"','"+module+"','"+noteCM+"','"+noteTD+"','"+noteTP+"');";
+            try { 
+                gestionUniversite.Connexion.getInstance().getStatement().executeUpdate(requete);
+            } catch (SQLException ex) {
+                Logger.getLogger(ModeleApplication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }      
+    }
+
     
     // FONCTIONS GAEL
     public ArrayList<Seance> consulterEDTProfesseur(Date dateDebut, Date dateFin, Professeur prof) {
@@ -429,5 +643,21 @@ class ModeleApplication {
         }else{
             return false;
         }
+    }
+    
+    void ajouterEtudiant(String nom, String prenom, String mdp, Formation formation) {
+        this.universite.ajouterEtudiant(nom, prenom, mdp, formation);
+    }
+
+    void ajouterProfesseur(String nom, String prenom, String mdp) {
+        this.universite.ajouterProfesseur(nom, prenom, mdp);
+    }
+
+    void ajouterPersonnel(String nom, String prenom, String mdp) {
+        this.universite.ajouterPersonnel(nom, prenom, mdp);
+    }
+    
+    public boolean ajouterModule(String nomModule, String loginResponsable) {
+       return this.universite.ajouterModule(this.currentFormation, nomModule, loginResponsable);
     }
 }

@@ -1,7 +1,3 @@
-    /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package gestionUniversite;
 
 import java.sql.Date;
@@ -43,6 +39,7 @@ public class BatchProfesseur {
             System.out.println("2. Afficher Emploi du temps");
             System.out.println("3. Ajouter une séance");
             System.out.println("4. Réserver une salle");
+            System.out.println("5. Saisir une/des notes");
             System.out.println("8. Quitter");
             System.out.println(" =======================================================");
             System.out.println("Quel est votre choix ? (tapez le chiffre correspondant)");
@@ -63,7 +60,11 @@ public class BatchProfesseur {
                     case 4 : 
                         reserverSalle();
                         break;
+                    case 5 :
+                        afficherSaisieNote();
+                        break;
                     case 8 : 
+                        this.modeleApplication.commit();
                         System.exit(0);
                     default : 
                         afficherChoixIncorrect();
@@ -341,4 +342,53 @@ public class BatchProfesseur {
         
         System.out.println("Salle réservée : " + s.getSalle().getNom());
     }
+    
+    public void afficherSaisieNote() {
+        System.out.println("Saisie de notes : ");
+        System.out.println("Liste des modules dont vous etes responsable : ");
+        Professeur professeur = (Professeur) this.modeleApplication.getCurrent();
+        ArrayList<Module> modules = this.universite.getModulesParProfesseur(professeur);
+        for (int i = 0; i< modules.size(); i++) {
+            System.out.println(i+1+"- "+modules.get(i).getCode());
+        }
+        System.out.println("Pour quel module souhaitez vous fixer un coefficient ?");
+        int indice = scan.nextInt();
+        while ((indice <= 0) || (indice > modules.size())) {
+            indice = scan.nextInt();
+        }
+        Module module = modules.get(indice-1);
+        ArrayList<Etudiant> etudiants = ((Formation)module.getSuccessor()).getEtudiants();
+        if (etudiants.size() == 0) {
+            System.out.println("Il n'y a pas d'etudiant pour cette formation");
+            this.afficherMenuPrincipal();
+        }
+            
+        System.out.println("Pour quel etudiant souhaitez vous saisir les notes ?");
+        for (int i = 0; i< etudiants.size(); i++) {
+            System.out.println(i+1+"- "+etudiants.get(i).getLogin());
+        }
+        System.out.println("Saisissez son numero :");
+        indice = scan.nextInt();
+        while ((indice <= 0) || (indice > etudiants.size())) {
+            indice = scan.nextInt();
+        }
+        Etudiant etudiant = etudiants.get(indice-1);
+        System.out.println("Note de CM : ");
+        double cm = scan.nextDouble();
+        System.out.println("Note de TD : ");
+        double td = scan.nextDouble();
+        System.out.println("Note de TP : ");
+        double tp = scan.nextDouble();
+        
+        Resultat result = new Resultat(etudiant,module);
+        result.setNoteCM(cm);
+        result.setNoteTD(td);
+        result.setNoteTP(tp);
+        
+        this.universite.getLesResultats().add(result);
+        System.out.println("Notes enregistrées.");
+        
+        this.afficherMenuPrincipal();
+    }
+
 }

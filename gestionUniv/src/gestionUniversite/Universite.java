@@ -2,6 +2,7 @@ package gestionUniversite;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 /**
@@ -17,6 +18,8 @@ public class Universite extends GroupeEtudiants {
     private ArrayList<Seance> lesSeances;
     private ArrayList<Personne> lesPersonnes;
     private ArrayList<Etudiant> lesEtudiants;
+    
+    private ArrayList<Resultat> lesResultats;
 
     private ModeleApplication modeleApplication;  
     
@@ -30,6 +33,7 @@ public class Universite extends GroupeEtudiants {
         this.lesSeances = new ArrayList<Seance>();
         this.lesEtudiants = new ArrayList<Etudiant>();
         this.lesPersonnes = new ArrayList<Personne>();
+        this.lesResultats = new ArrayList<Resultat>();
     }
 
     public ArrayList<Personne> getLesPersonnes() {
@@ -41,10 +45,11 @@ public class Universite extends GroupeEtudiants {
     }
     
     public String dernierDuNom(String nom) {
-        nom = nom.substring(0, 4);
+        int taille = Math.min(4,nom.length());
+        nom = nom.substring(0, taille);
         String nomRes ="";
         for(Personne p : lesPersonnes) {
-            String nomCourant = p.getLogin().substring(0, 4);
+            String nomCourant = p.getLogin().substring(0, taille);
             System.out.println("nom : "+nom+", nomcourant : "+nomCourant);
             if (nomCourant.equals(nom)) {
                 nomRes = p.getLogin();
@@ -265,17 +270,22 @@ public class Universite extends GroupeEtudiants {
         return result;
     }
 
-    void ajouterEtudiant(String nom, String prenom, String mdp) {
+    void ajouterEtudiant(String nom, String prenom, String mdp, Formation formation) {
         Etudiant etud = new Etudiant(this.loginSuivant(nom),mdp,nom,prenom,this);
+        formation.addEtudiant(etud);
         this.lesEtudiants.add(etud);
         this.lesPersonnes.add(etud);
+        Collections.sort(this.getLesPersonnes());
         this.afficherPersonnes();
     }
+    
+    
 
     void ajouterProfesseur(String nom, String prenom, String mdp) {
         Professeur prof = new Professeur(this.loginSuivant(nom),mdp,nom,prenom,this);
         this.lesProfesseurs.add(prof);
         this.lesPersonnes.add(prof);
+        Collections.sort(this.getLesPersonnes());
         this.afficherPersonnes();
     }
 
@@ -283,19 +293,39 @@ public class Universite extends GroupeEtudiants {
         Personnel pers = new Personnel(this.loginSuivant(nom),mdp,nom,prenom,this);
         this.lesPersonnels.add(pers);
         this.lesPersonnes.add(pers);
+        Collections.sort(this.getLesPersonnes());
         this.afficherPersonnes();
     }
 
-    public void ajouterModule(Formation formation, String nomModule, String loginResponsable) {
+
+    public boolean ajouterModule(Formation formation, String nomModule, String loginResponsable) {
+        if (formation == null) {
+            System.out.println("Formation inconnue");
+            return false;
+        }
         String codeModule = this.calculerCodeModule(formation, nomModule);
         Module m = new Module(nomModule, codeModule);
+        if (m == null) {
+            System.out.println("Module inconnu.");
+            return false;
+        }
         Professeur responsable = this.getProfesseur(loginResponsable);
+        if (responsable == null) {
+            System.out.println("Professeur inconnu.");
+            return false;
+        }
         m.setResponsable(responsable);
         formation.addModule(m);
-        this.lesFormations.get(this.lesFormations.indexOf(formation)).addModule(m);
+        //this.lesFormations.get(this.lesFormations.indexOf(formation)).addModule(m);
+        return true;
     }
 
+
     public String calculerCodeModule(Formation formation, String nomModule) {
+        if(formation == null){
+            return null;
+        }
+        
         String codeFormationDuModule = formation.getCode();
         
         String codeModule = "";
@@ -316,12 +346,28 @@ public class Universite extends GroupeEtudiants {
         return codeModule;
     }
 
-    Formation ajouterFormation(String nom) {
+
+    Formation ajouterFormation(String nom, String nomSalleCM, String nomSalleTD) {
         String codeFormation = this.calculerCodeFormation(nom);
-        Formation form = new Formation(nom, codeFormation, null, null);//----------/!\ Gaël, les salles !! ----
+        if (codeFormation == null) {
+            return null;
+        }
+        Salle salleCM = this.getSalle(nomSalleCM);
+        if (salleCM == null) {
+            System.out.println("Salle CM inconnue.");
+            return null;
+        }
+        Salle salleTD = this.getSalle(nomSalleTD);
+        if(salleTD == null) {
+            System.out.println("Salle TD inconnue");
+            return null;
+        }
+        Formation form = new Formation(nom, codeFormation, salleCM, salleTD);//----------/!\ Gaël, les salles !! ----
         this.lesFormations.add(form);
+        System.out.println("Formation ajoutée.");
         return form;
     }   
+  
 
     private String calculerCodeFormation(String nom) {
         String code = "";
@@ -428,4 +474,74 @@ public class Universite extends GroupeEtudiants {
     public void addSeance(Seance s) {
         lesSeances.add(s);
     }
+    
+    public boolean modifierFormation(String code, String nom, String nomSalleCM, String nomSalleTD) {
+        Formation formation = this.getFormation(code);
+        if (formation == null) {
+            System.out.println("Formation inconnue");
+            return false;
+        }
+        Salle salleCM = this.getSalle(nomSalleCM);
+        if (salleCM == null) {
+            System.out.println("Salle CM inconnue");
+            return false;
+        }
+        Salle salleTD = this.getSalle(nomSalleTD);
+        if (salleTD == null) {
+            System.out.println("Salle TD inconnue");
+            return false;
+        }
+        formation.setNom(nom);
+        formation.setSalleCM(salleCM);
+        formation.setSalleTD(salleTD);
+        return true;
+    }
+
+    public boolean modifierModule(String codeModule, String codeProfesseur, String nomModule) {
+        Module module = this.getModule(codeModule);
+        if (module == null) {
+            System.out.println("Module inconnu.");
+            return false;
+        }
+        Professeur professeur = this.getProfesseur(codeProfesseur);
+        if (professeur == null) {
+            System.out.println("Professeur inconnu.");
+            return false;
+        }
+        
+        module.setNom(nomModule);
+        module.setResponsable(professeur);
+        return true;
+    }
+
+    boolean inscrireEtudiant(String login, String code) {
+        Etudiant etud = this.getEtudiant(login);
+        if (etud == null) {
+            System.out.println("Etudiant inconnu.");
+            return false;
+        }
+        Formation formation = this.getFormation(code);
+        if (formation == null) {
+            System.out.println("Formation inconnue.");
+            return false;
+        }
+        formation.addEtudiant(etud);
+        return true;
+    }
+    
+    void afficherLesEtudiants() {
+        System.out.println("Etudiants connus : ");
+        for(Etudiant etudiant : lesEtudiants){
+            System.out.println("-- "+etudiant.getLogin());
+        }
+    }
+    
+    public ArrayList<Resultat> getLesResultats() {
+        return lesResultats;
+    }
+
+    public void setLesResultats(ArrayList<Resultat> lesResultats) {
+        this.lesResultats = lesResultats;
+    }
+
 }

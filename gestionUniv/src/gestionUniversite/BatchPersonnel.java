@@ -4,9 +4,6 @@
  */
 package gestionUniversite;
 
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -39,10 +36,9 @@ public class BatchPersonnel {
             System.out.println("2. Ajouter une formation et les modules correspondants");
             System.out.println("3. Modifier une formation");
             System.out.println("4. Modifier un module");
-            System.out.println("5. Mettre en place une formation");
-            System.out.println("6. Inscrire un étudiant à une formation");
-            System.out.println("7. Calculer les moyennes");
-            System.out.println("9. Vous deconnecter");
+            System.out.println("5. Inscrire un étudiant à une formation");
+            System.out.println("6. Calculer les moyennes");
+            System.out.println("8. Vous deconnecter");
             System.out.println("=======================================================");
             System.out.println("Quel est votre choix ? (tapez le chiffre correspondant)");
             
@@ -63,16 +59,14 @@ public class BatchPersonnel {
                         afficherModifierModule();
                         break;
                     case 5 :
-                        afficherMettreEnPlaceFormation();
-                        break;
-                    case 6 :
                         afficherInscrireEtudiant();
                         break;
-                    case 7 :
+                    case 6 :
                         afficherCalculerMoyennes();
                         break;     
-                    case 9 :
-                        afficherSeDeconnecter();
+                    case 8 :
+                        this.modeleApplication.commit();
+                        System.exit(0);
                         break;
                     default : 
                         afficherChoixIncorrect();
@@ -121,9 +115,20 @@ public class BatchPersonnel {
 //            scan.next();
 //        }
         String typePersonne  ="";
+        Formation formation = null;
         switch(type){
             case 1 :
                 typePersonne = "etudiant";
+                System.out.println("Dans quel formation souhaitez vous inscrire cet etudiant ? ");
+                for (int i = 0 ; i<this.universite.getLesFormations().size(); i++) {
+                    System.out.println((i+1)+"- "+this.universite.getLesFormations().get(i).getCode());
+                }
+                System.out.println("Quel est votre choix ?");
+                int indice = this.scan.nextInt();
+                while ((indice <=0) || (indice > this.universite.getLesFormations().size())) {
+                    indice = this.scan.nextInt();
+                }
+                formation = this.universite.getLesFormations().get(indice-1);
                 break;
             case 2 :
                 typePersonne = "professeur";
@@ -139,13 +144,13 @@ public class BatchPersonnel {
         scan.nextLine();
         System.out.println("Type : "+typePersonne);
         if (typePersonne.equals("etudiant")) {
-           ((Personnel) this.modeleApplication.getCurrent()).ajouterEtudiant(nom, prenom, mdp);
+           this.modeleApplication.ajouterEtudiant(nom, prenom, mdp, formation);
         }
         if (typePersonne.equals("professeur")) {
-           ((Personnel) this.modeleApplication.getCurrent()).ajouterProfesseur(nom, prenom, mdp);
+           this.modeleApplication.ajouterProfesseur(nom, prenom, mdp);
         }
         if (typePersonne.equals("personnel")) {
-           ((Personnel) this.modeleApplication.getCurrent()).ajouterPersonnel(nom, prenom, mdp);
+           this.modeleApplication.ajouterPersonnel(nom, prenom, mdp);
         }
         System.out.println("La personne a bien été ajoutée");
         this.afficherMenuPersonnel();
@@ -155,18 +160,32 @@ public class BatchPersonnel {
             this.afficherAjouterPersonne();
         }
     }
-
+    
     private void afficherAjouterFormation() {
-        System.out.println("Ajouter une formation");
-        System.out.println("nom complet :");
-        String nom = scan.nextLine();
-        while (nom.isEmpty()) {
-            System.out.println("Veuillez entrer un nom correct.");
-            nom = scan.nextLine();
+        boolean b = false;
+        while(!b) {
+            System.out.println("Ajouter une formation");
+            System.out.println("nom complet :");
+            String nom = scan.nextLine();
+            while (nom.isEmpty()) {
+                System.out.println("Veuillez entrer un nom correct.");
+                nom = scan.nextLine();
+            }
+            System.out.println("salle CM :");
+            String nomSalleCM = scan.nextLine();
+            while (nomSalleCM.isEmpty()) {
+                System.out.println("Veuillez entrer un nom correct.");
+                nomSalleCM = scan.nextLine();
+            }
+            System.out.println("salle TD :");
+            String nomSalleTD = scan.nextLine();
+            while (nomSalleTD.isEmpty()) {
+                System.out.println("Veuillez entrer un nom correct.");
+                nomSalleTD = scan.nextLine();
+            }
+            b = this.modeleApplication.ajouterFormation(nom, nomSalleCM, nomSalleTD);
         }
-        ((Personnel) this.modeleApplication.getCurrent()).ajouterFormation(nom);
         //this.modeleApplication.ajouterFormation(nom);
-        System.out.println("Formation ajoutée.");
         this.afficherAjouterModule();
         //this.afficherMenuPersonnel();
     }
@@ -187,14 +206,22 @@ public class BatchPersonnel {
                 System.out.println("Nom de la formation : ");
                 nom = scan.nextLine();
         }
-        boolean res = this.modeleApplication.modifierFormation(code, nom);
+        System.out.println("Nouvean nom de la salle CM : ");
+        String nomSalleCM = scan.nextLine();
+        while(nomSalleCM.isEmpty()) {
+                System.out.println("Veuillez entrer un nom de salle correct.");
+                System.out.println("Nom de la salle CM : ");
+                nomSalleCM = scan.nextLine();
+        }
+        System.out.println("Nouvean nom de la salleTD : ");
+        String nomSalleTD = scan.nextLine();
+        while(nomSalleTD.isEmpty()) {
+                System.out.println("Veuillez entrer un nom de salle correct.");
+                System.out.println("Nom de la salle TD : ");
+                nomSalleTD = scan.nextLine();
+        }
+        boolean res = this.modeleApplication.modifierFormation(code, nom, nomSalleCM, nomSalleTD);
         while (!res) {
-//            System.out.println("Formation inconnue.");
-//            System.out.println("Code de la formation à modifier ?");
-//            code = scan.nextLine();
-//            System.out.println("Nouvean nom de la formation : ");
-//            nom = scan.nextLine();
-//            res = this.modeleApplication.modifierFormation(code, nom);
             this.afficherModifierFormation();
         }
         System.out.println("Modification enregistrée.");
@@ -229,35 +256,21 @@ public class BatchPersonnel {
         boolean modifOk = this.modeleApplication.modifierModule(codeModule, codeProfesseur, nomModule);
         while(!modifOk) {
             this.afficherModifierModule();
-//            System.out.println("Veuillez recommencer.");
-//            System.out.println("Code du module à modifier : ");
-//            codeModule = scan.nextLine();
-//            System.out.println("Nouveau nom du module : ");
-//            nomModule = scan.nextLine();
-//            System.out.println("Login du nouveau professeur responsable : ");
-//            codeProfesseur = scan.nextLine();
-//            modifOk = this.modeleApplication.modifierModule(codeModule, codeProfesseur, nomModule);
         }
         this.afficherMenuPersonnel();
     }
 
-    private void afficherMettreEnPlaceFormation() {
-        System.out.println("Désolé je vois pas à quoi ça correspond...");
-        this.afficherMenuPersonnel();
-    }
-
     private void afficherCalculerMoyennes() {
-        System.out.println("Celle là c'est pour toi Max ! :) ");
         this.afficherMenuPersonnel();
     }
 
-    private void afficherSeDeconnecter() {
-        this.modeleApplication.commit();
-        System.out.println("Modifications enregistrées.");
-        this.modeleApplication.deconnecter();
-        System.out.println("Vous êtes déconnecté. ");
-        this.afficherMenuPrincipal();  
-    }
+//    private void afficherSeDeconnecter() {
+//        this.modeleApplication.commit();
+//        System.out.println("Modifications enregistrées.");
+//        this.modeleApplication.deconnecter();
+//        System.out.println("Vous êtes déconnecté. ");
+//        this.afficherMenuPrincipal();  
+//    }
 
     private void afficherChoixIncorrect() {
         System.out.println("Le choix que vous avez fait ne correpond pas à une option valide. Veuillez recommencer.");
@@ -283,12 +296,13 @@ public class BatchPersonnel {
                 System.out.println("Login du professeur responsable : ");
                 loginResponsable = scan.nextLine();
             }
-            boolean profTrouve = ((Personnel) this.modeleApplication.getCurrent()).ajouterModule(nomModule, loginResponsable);
+            
+            boolean profTrouve = this.modeleApplication.ajouterModule(nomModule, loginResponsable);
             while(!profTrouve) {
                 System.out.println("Le professeur n'existe pas. Veuillez ");
                 System.out.println("Login du professeur responsable : ");
                 loginResponsable = scan.nextLine();
-                profTrouve = ((Personnel) this.modeleApplication.getCurrent()).ajouterModule(nomModule, loginResponsable);
+                profTrouve = this.modeleApplication.ajouterModule(nomModule, loginResponsable);
             }
             System.out.println("Continuer à ajouter des modules ? (O : oui, N : non)");
             String dmdContinue = scan.nextLine();
@@ -306,7 +320,7 @@ public class BatchPersonnel {
 
     private void afficherInscrireEtudiant() {
         System.out.println("Inscrire un étudiant à une formation");
-        this.modeleApplication.afficherLesEtudiants();
+        //this.modeleApplication.afficherLesEtudiants();
         System.out.println("Login de l'étudiant : ");
         String login = scan.nextLine();
         while(login.isEmpty()) {
@@ -325,12 +339,6 @@ public class BatchPersonnel {
         boolean res = this.modeleApplication.inscrireEtudiant(login, code);
         while(!res) {
             this.afficherInscrireEtudiant();
-//            System.out.println("Veuillez recommencer.");
-//            System.out.println("Login de l'étudiant : ");
-//            login = scan.nextLine();
-//            System.out.println("Code de la formation : ");
-//            code = scan.nextLine();
-//            res = this.modeleApplication.inscrireEtudiant(login, code);
         }
         System.out.println("Etudiant inscrit ! ");
         this.afficherMenuPersonnel();

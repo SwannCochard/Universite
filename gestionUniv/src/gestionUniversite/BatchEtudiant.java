@@ -46,7 +46,11 @@ public class BatchEtudiant {
                     case 1 : 
                         afficherEDT();
                         break;
+                    case 2 :
+                        consulterNotes();
+                        break;
                     case 8 : 
+                        this.modeleApplication.commit();
                         System.exit(0);
                     default : 
                         afficherChoixIncorrect();
@@ -116,5 +120,9 @@ public class BatchEtudiant {
             System.out.println("Erreur dans le format de la date");
             return calculerDate();
         }
+    }
+
+    private void consulterNotes() {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 }
