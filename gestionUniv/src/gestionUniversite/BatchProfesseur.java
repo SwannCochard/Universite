@@ -40,6 +40,7 @@ public class BatchProfesseur {
             System.out.println("3. Ajouter une séance");
             System.out.println("4. Réserver/Modifier une salle");
             System.out.println("5. Saisir une/des notes");
+            System.out.println("6. Afficher les notes de vos etudiants");
             System.out.println("8. Quitter");
             System.out.println(" =======================================================");
             System.out.println("Quel est votre choix ? (tapez le chiffre correspondant)");
@@ -62,6 +63,9 @@ public class BatchProfesseur {
                         break;
                     case 5 :
                         afficherSaisieNote();
+                        break;
+                    case 6 :
+                        afficherNoteEtudiants();
                         break;
                     case 8 : 
                         this.modeleApplication.commit();
@@ -412,4 +416,13 @@ public class BatchProfesseur {
         this.afficherMenuPrincipal();
     }
 
+    public void afficherNoteEtudiants() {
+        ArrayList<Module> modules = this.universite.getModulesParProfesseur((Professeur)this.modeleApplication.getCurrent());
+        for (Module m : modules) {
+            Formation f = (Formation) m.getSuccessor();
+            for (Etudiant etudiant : f.getEtudiants()) {
+                System.out.println(etudiant.getNom()+" "+etudiant.getPrenom()+" ("+etudiant.getLogin()+") : "+etudiant.getMoyenne()  );
+            }
+        }
+    }
 }

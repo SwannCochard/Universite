@@ -57,17 +57,31 @@ public class Universite extends GroupeEtudiants {
         return nomRes;
     }
     
-    public String loginSuivant(String nomPersonne) {
+     public String loginSuivant(String nomPersonne) {
         String res = "";
         nomPersonne  = nomPersonne.toLowerCase();
         String dernierLogin = this.dernierDuNom(nomPersonne);
         if ("".equals(dernierLogin)) {
             int taille = Math.min(4,nomPersonne.length());
             String partieNom = nomPersonne.substring(0,taille);
+            if(taille < 4) {
+                while(taille < 4) {
+                    partieNom = partieNom+"0";
+                    taille++;
+                }
+            }
             res = partieNom+"0001";
         }
         else {
-            String partieNom = dernierLogin.substring(0,4);
+            int taille = Math.min(4,nomPersonne.length());
+            String partieNom = dernierLogin.substring(0,taille);
+            
+            if(taille < 4) {
+                while(taille < 4) {
+                    partieNom = partieNom+"0";
+                    taille++;
+                }
+            }
             int partieNb = Integer.parseInt(dernierLogin.substring(4));
             partieNb++;
             String nb = ""+partieNb;
